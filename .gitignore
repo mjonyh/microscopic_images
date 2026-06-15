@@ -1,0 +1,6 @@
+# LIVECell project
+data/
+outputs/
+.venv/
+__pycache__/
+*.pyc
