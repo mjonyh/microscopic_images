@@ -90,6 +90,7 @@ def azimuthal_profile(power: np.ndarray, n_bins: int = 36) -> tuple[np.ndarray, 
     bins = np.linspace(0, 180, n_bins + 1)
     angles = (bins[:-1] + bins[1:]) / 2
     profile = ndimage.mean(power[mask], theta[mask], index=np.arange(1, n_bins + 1))
+    profile = np.nan_to_num(profile, nan=0.0)
     profile = profile / profile.max() if profile.max() > 0 else profile
     return angles, profile
 

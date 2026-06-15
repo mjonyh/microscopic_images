@@ -31,26 +31,43 @@ def main():
         if i % 500 == 0:
             print(f"  Processing {i}/{len(images)}...")
         img = load_image(path)
+        h, w = img.shape
         power, fx, fy = compute_fft(img)
-        freqs, profile = radial_profile(power, n_bins=200)
 
-        # Peak frequency (inverse of dominant cell size)
-        peak_idx = np.argmax(profile[1:]) + 1  # Skip DC
-        peak_freq = freqs[peak_idx]
-        peak_period = 1.0 / peak_freq if peak_freq > 0 else 0  # in pixels
+        # Radial profile: freqs are in "distance from center" units
+        # Convert to actual spatial frequency (cycles/pixel)
+        freqs_raw, profile = radial_profile(power, n_bins=200)
+        # Max frequency in cycles/pixel = 0.5 (Nyquist)
+        # freqs_raw goes from 0 to min(h//2, w//2) = min(260, 352) = 260
+        # So spatial_freq = freqs_raw / (min(h,w)/2) * 0.5
+        r_max = min(h // 2, w // 2)
+        spatial_freq = freqs_raw / r_max * 0.5  # cycles/pixel, range [0, 0.5]
 
-        # Spectral moments
-        total = profile.sum()
-        centroid = np.average(freqs, weights=profile) if total > 0 else 0
-        mean_period = 1.0 / centroid if centroid > 0 else 0
+        # Skip DC (freq=0), find peak in meaningful range
+        # Cell structures typically 5-50 pixels → freq 0.01-0.1 cycles/pixel
+        valid = spatial_freq > 0.005
+        if valid.any():
+            valid_freqs = spatial_freq[valid]
+            valid_profile = profile[valid]
+            peak_idx = np.argmax(valid_profile)
+            peak_freq = valid_freqs[peak_idx]
+            peak_period = 1.0 / peak_freq if peak_freq > 0 else 0  # pixels
+        else:
+            peak_freq = 0
+            peak_period = 0
+
+        # Spectral centroid (in spatial frequency)
+        total = profile[valid].sum() if valid.any() else 0
+        centroid_freq = np.average(spatial_freq[valid], weights=profile[valid]) if total > 0 else 0
+        mean_period = 1.0 / centroid_freq if centroid_freq > 0 else 0
 
         ann = annotations.get(path.stem, {})
         records.append({
             "filename": path.stem,
             "cell_line": get_cell_line(path.stem),
-            "peak_freq": peak_freq,
+            "peak_freq_cyc_per_px": peak_freq,
             "peak_period_px": peak_period,
-            "spectral_centroid": centroid,
+            "centroid_freq_cyc_per_px": centroid_freq,
             "mean_period_px": mean_period,
             "cell_count": ann.get("cell_count", -1),
             "mean_area_px": np.mean(ann["areas"]) if ann.get("areas") else -1,
@@ -73,7 +90,7 @@ def main():
     # (a) Peak period per cell line (box plot)
     ax = axes[0, 0]
     data = [df.loc[df["cell_line"] == cl, "peak_period_px"].values for cl in cell_lines]
-    bp = ax.boxplot(data, labels=cell_lines, patch_artist=True)
+    bp = ax.boxplot(data, tick_labels=cell_lines, patch_artist=True)
     for patch, cl in zip(bp["boxes"], cell_lines):
         patch.set_facecolor(color_map[cl])
     ax.set_ylabel("Peak Period (pixels)")
@@ -83,7 +100,7 @@ def main():
     # (b) Mean period per cell line
     ax = axes[0, 1]
     data = [df.loc[df["cell_line"] == cl, "mean_period_px"].values for cl in cell_lines]
-    bp = ax.boxplot(data, labels=cell_lines, patch_artist=True)
+    bp = ax.boxplot(data, tick_labels=cell_lines, patch_artist=True)
     for patch, cl in zip(bp["boxes"], cell_lines):
         patch.set_facecolor(color_map[cl])
     ax.set_ylabel("Mean Period (pixels)")
@@ -107,7 +124,7 @@ def main():
     # (d) Distribution of peak frequencies per cell line
     ax = axes[1, 1]
     for cl in cell_lines:
-        subset = df.loc[df["cell_line"] == cl, "peak_freq"]
+        subset = df.loc[df["cell_line"] == cl, "peak_freq_cyc_per_px"]
         ax.hist(subset, bins=30, alpha=0.4, label=cl, color=color_map[cl])
     ax.set_xlabel("Peak Frequency (cycles/px)")
     ax.set_ylabel("Count")

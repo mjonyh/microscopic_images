@@ -129,7 +129,7 @@ def main():
     # (b) Improvement distribution per cell line
     ax = axes[0, 1]
     data = [df.loc[df["cell_line"] == cl, "iou_improvement"].values for cl in cell_lines]
-    bp = ax.boxplot(data, labels=cell_lines, patch_artist=True)
+    bp = ax.boxplot(data, tick_labels=cell_lines, patch_artist=True)
     for patch, cl in zip(bp["boxes"], cell_lines):
         patch.set_facecolor(color_map[cl])
     ax.set_ylabel("IoU Improvement")

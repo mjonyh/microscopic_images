@@ -6,10 +6,20 @@ FFT-based analysis of the LIVECell phase-contrast microscopy dataset.
 ## Dataset
 
 - **Source**: LIVECell (Sartorius / Nature Methods 2021)
-- **Kaggle mirror**: https://www.kaggle.com/datasets/yuriisavinskyi/livecell-dataset-2021
 - **Images**: 3,727 TIFF, 704x520, 8-bit grayscale, phase-contrast
 - **Cell lines**: MCF7, SkBr3, SHSY5Y, BT474, A172, BV2, Huh7, SKOV3
 - **Annotations**: COCO format, 25% subset (808 images, 258,569 cell instances)
+
+## Key Results
+
+| Objective | Key Finding |
+|-----------|-------------|
+| 1. Cell Density | Total FFT power correlates r=0.751 with cell count |
+| 2. Morphology | FFT peak period varies 7-20 px across cell lines |
+| 3. Quality | All images highly isotropic (isotropy ≈ 1.0) |
+| 4. Classification | 81.7% accuracy (SVM) from FFT features alone |
+| 5. Segmentation | Bandpass filter improves IoU by +0.07 (41% images) |
+| 6. Time-Lapse | 49 mitosis-like events detected; MCF7/SkBr3 most active |
 
 ## Setup
 
@@ -18,21 +28,10 @@ cd ~/git/livecell
 source .venv/bin/activate
 ```
 
-## Analysis Objectives
-
-| # | Objective | Script | Status |
-|---|-----------|--------|--------|
-| 1 | Cell Density & Spatial Distribution | `src/obj1_density_spectrum.py` | Pending |
-| 2 | Cell Morphology & Size Distribution | `src/obj2_morphology.py` | Pending |
-| 3 | Image Quality & Artifact Detection | `src/obj3_quality.py` | Pending |
-| 4 | Texture-Based Cell Line Classification | `src/obj4_classification.py` | Pending |
-| 5 | FFT-Based Segmentation Preprocessing | `src/obj5_segmentation_filter.py` | Pending |
-| 6 | Time-Lapse Dynamics | `src/obj6_timelapse.py` | Pending |
-
 ## Run
 
 ```bash
-bash run_all.sh        # All 6 objectives
+bash run_all.sh        # All 6 objectives (~27 min)
 bash run_all.sh 1      # Single objective
 ```
 
@@ -48,5 +47,6 @@ All results in `outputs/`:
 
 ## See Also
 
-- `PLAN.md` — Implementation plan
+- `REPORT.md` — Full results report with tables and analysis
 - `CHECKLIST.md` — Detailed checklist with step-by-step verification
+- `PLAN.md` — Implementation plan

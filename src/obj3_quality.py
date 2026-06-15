@@ -13,7 +13,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 from common import (
-    load_image, list_images, compute_fft, azimuthal_profile,
+    load_image, list_images, compute_fft, radial_profile, azimuthal_profile,
     get_cell_line, parse_time, OUTPUT_DIR
 )
 
@@ -34,7 +34,8 @@ def main():
 
         # Azimuthal isotropy: low variance = isotropic (clean), high = directional artifacts
         angles, az_profile = azimuthal_profile(power, n_bins=36)
-        isotropy = 1.0 - (az_profile.std() / (az_profile.mean() + 1e-10))
+        mean_az = az_profile.mean()
+        isotropy = 1.0 - (az_profile.std() / (mean_az + 1e-10))
 
         # Low-frequency dominance (shading artifact)
         freqs, radial = radial_profile(power, n_bins=100)
@@ -69,7 +70,7 @@ def main():
     # (a) Isotropy distribution per cell line
     ax = axes[0, 0]
     data = [df.loc[df["cell_line"] == cl, "isotropy"].values for cl in cell_lines]
-    bp = ax.boxplot(data, labels=cell_lines, patch_artist=True)
+    bp = ax.boxplot(data, tick_labels=cell_lines, patch_artist=True)
     for patch, cl in zip(bp["boxes"], cell_lines):
         patch.set_facecolor(color_map[cl])
     ax.set_ylabel("Isotropy (1 = clean)")
@@ -81,7 +82,7 @@ def main():
     # (b) Low-frequency fraction (shading)
     ax = axes[0, 1]
     data = [df.loc[df["cell_line"] == cl, "low_freq_frac"].values for cl in cell_lines]
-    bp = ax.boxplot(data, labels=cell_lines, patch_artist=True)
+    bp = ax.boxplot(data, tick_labels=cell_lines, patch_artist=True)
     for patch, cl in zip(bp["boxes"], cell_lines):
         patch.set_facecolor(color_map[cl])
     ax.set_ylabel("Low-Frequency Fraction")

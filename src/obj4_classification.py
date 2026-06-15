@@ -20,14 +20,14 @@ from sklearn.metrics import confusion_matrix, classification_report
 
 sys.path.insert(0, str(Path(__file__).parent))
 from common import (
-    load_image, list_images, compute_fft, radial_profile,
+    load_image, list_images, compute_fft, radial_profile, azimuthal_profile,
     spectral_features, get_cell_line, OUTPUT_DIR
 )
 
 
 def extract_features(image: np.ndarray) -> np.ndarray:
     """Extract FFT feature vector from a single image."""
-    power, fx, fy = compute_fft(img)
+    power, fx, fy = compute_fft(image)
     freqs, radial = radial_profile(power, n_bins=50)
     angles, azimuthal = azimuthal_profile(power, n_bins=36)
     feats = spectral_features(power, fx, fy)
