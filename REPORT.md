@@ -225,7 +225,13 @@ Several limitations should be noted. First, the FFT peak period showed poor corr
 
 ### 4.2 Future Work
 
-Future directions include: (1) combining FFT features with deep learning embeddings for improved classification, (2) developing cell-line-adaptive filter designs, (3) extending the time-lapse analysis to track individual wells rather than population averages, and (4) applying the framework to other microscopy modalities (fluorescence, DIC).
+Future directions include: (1) combining FFT features with deep learning
+embeddings for improved classification, (2) developing cell-line-adaptive
+filter designs (see [FILTERS.md](FILTERS.md) for a comprehensive review of
+bandpass filter types and cell-line-specific recommendations), (3) extending
+the time-lapse analysis to track individual wells rather than population
+averages, and (4) applying the framework to other microscopy modalities
+(fluorescence, DIC).
 
 ---
 

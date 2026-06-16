@@ -15,6 +15,10 @@ The report covers all 6 analysis objectives:
 5. **FFT-Based Segmentation** — Bandpass filtering improves IoU by +0.07
 6. **Time-Lapse Dynamics** — 49 mitosis-like events detected
 
+## Filter Reference
+
+**[FILTERS.md](FILTERS.md)** — Comprehensive reference of 12 bandpass filter types for FFT-based image analysis, with mathematical formulations, comparison tables, and cell-line-specific recommendations for phase-contrast microscopy.
+
 ## Key Results
 
 | Objective | Key Finding |
