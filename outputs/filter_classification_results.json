@@ -1,0 +1,8 @@
+{
+  "classification": {
+    "raw_accuracy": 0.7525000000000001,
+    "raw_std": 0.01159202311936962,
+    "filtered_accuracy": 0.7475,
+    "filtered_std": 0.017940875118009174
+  }
+}

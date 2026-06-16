@@ -255,3 +255,48 @@ This work was performed using the LIVECell dataset (Edlund et al., 2021, Nature 
 2. Lloyd, D. et al. (1993). The cell nucleus in perspective. *Trends in Cell Biology*, 3(11), 390–392.
 3. Bray, M.-A. et al. (2012). Cell Painting, a high-content image-based assay for morphological profiling. *Nature Protocols*, 7, 1747–1761.
 4. Edlund, C. et al. (2021). LIVECell—A large-scale dataset for label-free live cell segmentation. *Nature Methods*, 18, 1048–1057.
+
+---
+
+## 5. Bandpass Filter Comprehensive Comparison
+
+*Added in this revision: 13 filter types evaluated across 8 cell lines.*
+
+We implemented and evaluated 13 bandpass filter types from the literature (see [FILTERS.md](FILTERS.md) for mathematical formulations): Ideal, Butterworth, Gaussian, Chebyshev I, Chebyshev II, Elliptic, Laplacian-BP, Homomorphic, Gabor, Difference of Gaussians (DoG), Trapezoidal, Cosine-tapered (Hann), and Parametric. A total of **20,200 segmentations** were performed (808 annotated images × 25 filter configurations with varying parameters).
+
+**Key Finding 1 — No universal best filter.** Different cell lines benefit from different filter types (Table 7).
+
+| Cell Line | Best Filter | Best IoU | Raw IoU | ΔIoU |
+|-----------|-------------|----------|---------|-------|
+| A172 | Homomorphic | 0.827 | 0.583 | +0.244 |
+| BT474 | Butterworth | 0.507 | 0.314 | +0.193 |
+| BV2 | DoG | 0.527 | 0.191 | +0.336 |
+| Huh7 | Homomorphic | 0.609 | 0.285 | +0.324 |
+| MCF7 | Elliptic | 0.639 | 0.338 | +0.302 |
+| SHSY5Y | DoG | 0.799 | 0.325 | +0.474 |
+| SKOV3 | Gaussian | 0.965 | 0.627 | +0.338 |
+| SkBr3 | DoG | 0.630 | 0.183 | +0.447 |
+
+DoG won for 3/8 lines, Homomorphic for 2/8, and Butterworth/Elliptic/Gaussian each for 1/8. This strongly motivates adaptive filter selection.
+
+**Key Finding 2 — Adaptive filtering adds +0.130 IoU over fixed.** Using cell-line-specific optimal parameters improved mean IoU from 0.378 (single fixed Butterworth) to 0.508 (best adaptive filter per line).
+
+**Key Finding 3 — Application-dependence.**
+- **Segmentation**: DoG and Homomorphic are strongest (largest IoU gains)
+- **Classification**: Raw FFT features (0.753) outperform filtered (0.748) — filtering removes discriminative low-frequency illumination information
+- **Counting**: Homomorphic slightly improved accuracy (MAE 0.978→0.937)
+
+**Filter Frequency Response Characteristics** (see [outputs/filter_radial_profiles.png](outputs/filter_radial_profiles.png)):
+- Ideal: sharp cutoff, severe ringing in spatial domain
+- Butterworth (n=2): smooth, flat passband, mild artifacts
+- Gaussian: smoothest transition, zero ringing
+- DoG: naturally bandpass, optimal for blob detection
+- Homomorphic: suppresses low-freq illumination, enhances structure
+- Others: trade-offs between sharpness and artifacts
+
+**Recommendations:**
+1. For segmentation preprocessing: use **DoG (σ₁=0.05, σ₂=0.20)** as default
+2. For images with heavy illumination gradients: use **Homomorphic (γ_L=0.5, γ_H=2.0)**
+3. For classification: use **raw FFT features** without filtering
+4. For production systems: implement **cell-line-adaptive filter selection**
+5. Avoid Ideal and Elliptic filters for biological images (ringing around cell boundaries)

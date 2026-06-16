@@ -1,0 +1,9 @@
+cell_line,filter_type,params,mean_iou,n_images
+A172,homomorphic,"{'d0': 0.1, 'gamma_l': 0.7, 'gamma_h': 2.0}",0.5900845535109273,97
+BT474,homomorphic,"{'d0': 0.15, 'gamma_l': 0.3, 'gamma_h': 3.0}",0.32372897759695646,107
+BV2,dog,"{'sigma1': 0.03, 'sigma2': 0.15}",0.3056564930086026,96
+Huh7,homomorphic,"{'d0': 0.1, 'gamma_l': 0.5, 'gamma_h': 2.0}",0.28510532004630157,97
+MCF7,homomorphic,"{'d0': 0.15, 'gamma_l': 0.3, 'gamma_h': 3.0}",0.34315956009544774,117
+SHSY5Y,dog,"{'sigma1': 0.05, 'sigma2': 0.2}",0.5551995649650285,112
+SKOV3,homomorphic,"{'d0': 0.1, 'gamma_l': 0.5, 'gamma_h': 2.0}",0.6855379433135067,70
+SkBr3,dog,"{'sigma1': 0.05, 'sigma2': 0.2}",0.35189279604932094,112
