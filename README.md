@@ -23,6 +23,13 @@ The report covers all 6 analysis objectives:
 
 **[FILTER_PLAN.md](FILTER_PLAN.md)** — Professional implementation plan with 7 phases and 40+ checklist items for implementing all 12 bandpass filters, running segmentation comparison, cell-line-adaptive optimization, and application-specific analysis. Estimated ~12.5 hours total.
 
+## Physics-Informed Enhancement Models
+
+**[REPORT_PHYSICS_MODELS.md](REPORT_PHYSICS_MODELS.md)** — Comparative analysis of 5 enhancement models:
+DeBCR-inspired, PI-DDPM-inspired, PSF-Learning, DoG filter, and DeBCR+DoG combined.
+Key finding: Combined enhancement+filtering achieves 2× improvement over filter-only.
+[PHYSICS_INFORMED_MODELS.md](PHYSICS_INFORMED_MODELS.md) for detailed model reference.
+
 ## Mixed-Quality Dataset
 
 **[DATASET_SUMMARY.md](DATASET_SUMMARY.md)** — 16,912 images (1,208 HQ + 15,704 LQ) with 13 degradation types.
