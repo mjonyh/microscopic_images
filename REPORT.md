@@ -223,21 +223,28 @@ Time-lapse FFT dynamics reveal biological insights: the increasing total power t
 
 Several limitations should be noted. First, the FFT peak period showed poor correlation with ground truth cell area, likely due to the complex contrast transfer function of phase-contrast optics. Second, the isotropy analysis showed uniformly high values, limiting its utility as a quality discriminator. Third, the mitosis detection method is heuristic and may miss events or produce false positives. Fourth, the 25% annotation subset limits the statistical power of cell-count-based analyses.
 
-### 4.2 Future Work
+### 4.3 Future Work
 
 Future directions include: (1) combining FFT features with deep learning
-embeddings for improved classification, (2) developing cell-line-adaptive
-filter designs (see [FILTERS.md](FILTERS.md) for a comprehensive review of
-bandpass filter types and cell-line-specific recommendations), (3) extending
-the time-lapse analysis to track individual wells rather than population
-averages, and (4) applying the framework to other microscopy modalities
-(fluorescence, DIC).
+embeddings for improved classification, (2) per-image adaptive filtering where
+parameters are tuned based on local confluence and background, (3) extending the
+time-lapse analysis to track individual wells rather than population averages,
+(4) applying the framework to other microscopy modalities (fluorescence, DIC),
+(5) combining spatial features with FFT features for improved classification,
+and (6) **integrating deep learning-based image enhancement models** (CARE,
+Noise2Void, SwinIR, Restormer) as preprocessing before the filter pipeline.
+Our analysis shows that bandpass filter improvements on low-quality images are
+10–100× smaller than on high-quality images. Deep learning enhancement models
+can potentially recover information that filters cannot, and the combination of
+enhancement + filtering is expected to yield the best results (see
+[ENHANCEMENT_MODELS.md](ENHANCEMENT_MODELS.md) for a comprehensive review of
+9 model architectures, training strategies, and expected improvements).
 
 ---
 
 ## 5. Conclusion
 
-We presented a comprehensive FFT analysis of 3,727 phase-contrast microscopy images across 8 cell lines. Key findings include: total FFT power as a strong cell density proxy (*r* = 0.751), 81.7% cell line classification accuracy from FFT texture features, segmentation improvement through bandpass filtering (ΔIoU = +0.070), and cell-line-specific time-lapse proliferation signatures. These results establish FFT analysis as a valuable, computationally efficient tool for quantitative phase-contrast microscopy.
+We presented a comprehensive FFT analysis of 3,727 phase-contrast microscopy images across 8 cell lines. Key findings include: total FFT power as a strong cell density proxy (*r* = 0.751), 81.7% cell line classification accuracy from FFT texture features, segmentation improvement through bandpass filtering (ΔIoU = +0.070 fixed, +0.130 adaptive), and cell-line-specific time-lapse proliferation signatures. We implemented and compared 13 bandpass filter types and demonstrated that filter performance is strongly quality-dependent — improvements on low-quality images are 10–100× smaller than on high-quality images. We provide quality-aware, degradation-specific filter selection guidelines. These results establish FFT analysis as a valuable, computationally efficient tool for quantitative phase-contrast microscopy, while highlighting the need for deep learning-based enhancement models to restore information in low-quality images.
 
 ---
 
