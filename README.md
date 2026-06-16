@@ -3,50 +3,75 @@
 FFT-based analysis of the LIVECell phase-contrast microscopy dataset.
 8 cell lines, 3,727 images, 22 time-lapse wells.
 
-## Dataset
+## Scientific Report
 
-- **Source**: LIVECell (Sartorius / Nature Methods 2021)
-- **Images**: 3,727 TIFF, 704x520, 8-bit grayscale, phase-contrast
-- **Cell lines**: MCF7, SkBr3, SHSY5Y, BT474, A172, BV2, Huh7, SKOV3
-- **Annotations**: COCO format, 25% subset (808 images, 258,569 cell instances)
+**[REPORT.md](REPORT.md)** — Full scientific report with embedded figures, tables, and analysis.
+
+The report covers all 6 analysis objectives:
+1. **Cell Density & Spatial Distribution** — FFT power as cell density proxy (*r*=0.751)
+2. **Cell Morphology & Size Distribution** — FFT peak analysis across 8 cell lines
+3. **Image Quality & Artifact Detection** — Isotropy and background shading analysis
+4. **Cell Line Classification** — 81.7% SVM accuracy from 94 FFT features
+5. **FFT-Based Segmentation** — Bandpass filtering improves IoU by +0.07
+6. **Time-Lapse Dynamics** — 49 mitosis-like events detected
 
 ## Key Results
 
 | Objective | Key Finding |
 |-----------|-------------|
-| 1. Cell Density | Total FFT power correlates r=0.751 with cell count |
-| 2. Morphology | FFT peak period varies 7-20 px across cell lines |
-| 3. Quality | All images highly isotropic (isotropy ≈ 1.0) |
-| 4. Classification | 81.7% accuracy (SVM) from FFT features alone |
-| 5. Segmentation | Bandpass filter improves IoU by +0.07 (41% images) |
-| 6. Time-Lapse | 49 mitosis-like events detected; MCF7/SkBr3 most active |
+| Density | Total FFT power correlates *r*=0.751 with cell count |
+| Morphology | FFT peak period 7–20 px across cell lines |
+| Quality | All images highly isotropic (≈1.0) |
+| Classification | 81.7% accuracy (SVM) from FFT features alone |
+| Segmentation | Bandpass filter improves IoU by +0.07 (41% images) |
+| Time-Lapse | 49 mitosis-like events; MCF7/SkBr3 most active |
 
-## Setup
+## Dataset
+
+- **Source**: [LIVECell](https://sartorius-research.github.io/LIVECell/) (Sartorius / Nature Methods 2021)
+- **Images**: 3,727 TIFF, 704×520, 8-bit grayscale, phase-contrast
+- **Cell lines**: MCF7, SkBr3, SHSY5Y, BT474, A172, BV2, Huh7, SKOV3
+- **Annotations**: COCO format, 25% subset (808 images, 258,569 cell instances)
+
+## Quick Start
 
 ```bash
-cd ~/git/livecell
+git clone git@github.com:mjonyh/microscopic_images.git
+cd microscopic_images
+```
+
+Open **REPORT.md** in any Markdown viewer or GitHub to browse the full report with figures.
+
+## Reproduce
+
+```bash
 source .venv/bin/activate
+bash run_all.sh        # Run all 6 objectives (~27 min)
+bash run_all.sh 1      # Run single objective
 ```
 
-## Run
+## Project Structure
 
-```bash
-bash run_all.sh        # All 6 objectives (~27 min)
-bash run_all.sh 1      # Single objective
 ```
-
-## Outputs
-
-All results in `outputs/`:
-- `obj1_features.csv` + `obj1_density_spectrum.png`
-- `obj2_morphology.csv` + `obj2_morphology.png`
-- `obj3_quality_scores.csv` + `obj3_quality.png`
-- `obj4_classification_report.csv` + `obj4_classification.png`
-- `obj5_segmentation.csv` + `obj5_segmentation.png`
-- `obj6_timelapse.csv` + `obj6_mitosis_events.csv` + `obj6_timelapse.png`
-
-## See Also
-
-- `REPORT.md` — Full results report with tables and analysis
-- `CHECKLIST.md` — Detailed checklist with step-by-step verification
-- `PLAN.md` — Implementation plan
+├── REPORT.md                        # Scientific report (start here)
+├── REPORT.pdf                       # Compiled PDF version
+├── REPORT.tex                       # LaTeX source
+├── CHECKLIST.md                     # Detailed checklist
+├── PLAN.md                          # Implementation plan
+├── run_all.sh                       # Master runner script
+├── src/
+│   ├── common.py                    # Shared FFT utilities
+│   ├── obj1_density_spectrum.py
+│   ├── obj2_morphology.py
+│   ├── obj3_quality.py
+│   ├── obj4_classification.py
+│   ├── obj5_segmentation_filter.py
+│   ├── obj6_timelapse.py
+│   ├── summarize.py                 # Dataset summary
+│   └── generate_report_figures.py   # Report figure generator
+├── outputs/
+│   ├── report_fig1.png — report_fig6.png  # Report figures
+│   ├── obj1_features.csv — obj6_timelapse.csv  # Result data
+│   └── REPORT.pdf                                # Compiled report
+└── data/                            # Dataset (not in git)
+```
