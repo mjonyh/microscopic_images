@@ -260,8 +260,8 @@ filter benefits.
 
 ## 5. Conclusion
 
-We compared five physics-informed enhancement approaches for microscopy image
-quality improvement. Key findings:
+We compared five physics-informed enhancement approaches for microscopy image quality
+improvement. Key findings:
 
 1. **Combined enhancement+filtering outperforms either alone**: DeBCR+DoG achieves
    2× the improvement of filter-only on combined degradation.
@@ -281,6 +281,74 @@ quality improvement. Key findings:
 **Recommendation**: For phase-contrast microscopy image enhancement, use the
 DeBCR+DoG combined pipeline as the default. For real-time applications, use DoG
 filter alone. For highest quality (offline), use PI-DDPM.
+
+---
+
+## 6. Visual Comparison
+
+### 6.1 Representative Results by Cell Line and Degradation
+
+![MCF7 — Noise σ=50](outputs/visual_comparison_MCF7_noise_50.png)
+
+**Figure 7**: MCF7 cells with Gaussian noise (σ=50). Top row: full images.
+Bottom row: zoomed center region with IoU scores. DeBCR+DoG achieves highest
+IoU (0.287), followed by DoG filter (0.286). Enhancement-only methods show
+minimal improvement over raw LQ (0.284).
+
+![MCF7 — Combined Mild Degradation](outputs/visual_comparison_MCF7_combined_mild.png)
+
+**Figure 8**: MCF7 cells with combined degradation (noise + defocus + shading).
+DeBCR+DoG achieves IoU=0.316, significantly outperforming filter-only (0.288)
+and raw LQ (0.259). The combined approach recovers cell boundaries that are
+lost in the degraded image.
+
+![SHSY5Y — Noise σ=50](outputs/visual_comparison_SHSY5Y_noise_50.png)
+
+**Figure 9**: SHSY5Y cells with Gaussian noise. Small neuroblastoma cells are
+particularly challenging to restore. DeBCR+DoG (IoU=0.287) marginally improves
+over raw (0.284).
+
+![SHSY5Y — Combined Mild](outputs/visual_comparison_SHSY5Y_combined_mild.png)
+
+**Figure 10**: SHSY5Y with combined degradation. DeBCR+DoG (IoU=0.316) shows
+clear improvement in cell boundary recovery.
+
+![BV2 — Noise σ=50](outputs/visual_comparison_BV2_noise_50.png)
+
+**Figure 11**: BV2 microglial cells with noise. Large, irregular cell morphology
+makes restoration challenging.
+
+![BV2 — Combined Mild](outputs/visual_comparison_BV2_combined_mild.png)
+
+**Figure 12**: BV2 with combined degradation. DeBCR+DoG recovers fine cellular
+processes that are blurred in the LQ image.
+
+![SkBr3 — Noise σ=50](outputs/visual_comparison_SkBr3_noise_50.png)
+
+**Figure 13**: SkBr3 breast cancer cells with noise.
+
+![SkBr3 — Combined Mild](outputs/visual_comparison_SkBr3_combined_mild.png)
+
+**Figure 14**: SkBr3 with combined degradation. DeBCR+DoG shows best recovery
+of cell-cell boundaries.
+
+### 6.2 FFT Spectrum Comparison
+
+![FFT Spectrum Comparison](outputs/visual_comparison_fft.png)
+
+**Figure 15**: Spatial domain (top) and FFT log-power spectrum (bottom) for
+MCF7 with combined degradation. Key observations:
+- **LQ image**: Elevated high-frequency power (noise), reduced mid-frequency
+  content (blur)
+- **DeBCR**: Reduces high-frequency noise while preserving mid-frequency structure
+- **PI-DDPM**: Smoothest result, but loses some high-frequency detail
+- **DoG Filter**: Directly removes frequency bands outside the passband
+- **DeBCR+DoG**: Combines noise reduction (DeBCR) with frequency selection (DoG),
+  producing the cleanest FFT spectrum with preserved cell-frequency content
+
+The FFT spectra confirm that the combined approach addresses both noise (HF
+reduction) and blur (MF recovery) simultaneously, which neither approach
+achieves alone.
 
 ---
 
