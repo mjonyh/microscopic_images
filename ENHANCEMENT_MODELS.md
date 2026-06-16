@@ -113,10 +113,12 @@ remove interference — they cannot recover information lost during acquisition.
 - **Examples**: CVDM (Conditional Variational Diffusion Model), Physics-Informed DDPM
 
 ### 3.9 Physics-Informed Models
-- **Approach**: Incorporate optical physics (PSF, diffraction) into the model
-- **Strengths**: Physically consistent results, less data needed
-- **Limitations**: Requires microscope-specific calibration
+- **Approach**: Incorporate optical physics (PSF, diffraction, noise models) into the model
+- **Strengths**: Physically consistent results, less data needed, better generalization
+- **Limitations**: Requires microscope-specific calibration (PSF, noise model)
 - **Best for**: Specific microscope types with known PSF
+- **Key models**: DeBCR (wavelet+CNN), PI-DDPM (diffusion+physics), PSF learning (CVPR 2025)
+- **See**: [PHYSICS_INFORMED_MODELS.md](PHYSICS_INFORMED_MODELS.md) for detailed review
 
 ## 4. Practical Recommendations for Our Pipeline
 
