@@ -19,6 +19,10 @@ The report covers all 6 analysis objectives:
 
 **[FILTERS.md](FILTERS.md)** — Comprehensive reference of 12 bandpass filter types for FFT-based image analysis, with mathematical formulations, comparison tables, and cell-line-specific recommendations for phase-contrast microscopy.
 
+## Filter Implementation Plan
+
+**[FILTER_PLAN.md](FILTER_PLAN.md)** — Professional implementation plan with 7 phases and 40+ checklist items for implementing all 12 bandpass filters, running segmentation comparison, cell-line-adaptive optimization, and application-specific analysis. Estimated ~12.5 hours total.
+
 ## Key Results
 
 | Objective | Key Finding |
