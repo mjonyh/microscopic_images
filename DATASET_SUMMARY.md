@@ -123,14 +123,33 @@ python src/synthesize_low_quality.py
 python src/compute_quality_metrics.py
 ```
 
-## External Datasets (Pending)
+## External Datasets
 
-| Dataset | Source | Content | Status |
-|---------|--------|---------|--------|
-| BBBC005 | Kaggle | 19,200 synthetic cells with blur levels 1-9 | Downloaded, needs unzip |
-| Fluorescence Denoising | Kaggle | 5,000 noisy/clean fluorescence pairs | Pending |
-| Recursion Cellular | Kaggle | 6-channel fluorescence with batch effects | Pending (50 GB) |
-| Cell Painting Gallery | AWS | Cell Painting assay, variable quality | Pending (TB-scale) |
+| Dataset | Images | Type | Quality Range | Status |
+|---------|--------|------|---------------|--------|
+| BBBC005 | 19,200 | Synthetic fluorescence | Blur levels 1-25 | Downloaded (3.5 GB) |
+| Fluorescence Denoising | 5,000 | Real fluorescence | Low/high SNR | Pending |
+| Recursion Cellular | Large | 6-channel fluorescence | Batch effects | Pending (50 GB) |
+
+### BBBC005 Details
+- **Content**: 19,200 synthetic cell images with controlled blur
+- **Blur levels**: 25 levels (s01=sharp, s25=most blurred)
+- **Channels**: 2 per image (w1, w2)
+- **Quality split**: High (levels 1-5): 3,840; Medium (6-10): 3,840; Low (11-25): 11,520
+- **Index file**: `data/mixed_quality/real_low/bbbc005/bbbc005_index.csv`
+
+## Recommended Mixed-Quality Dataset Composition
+
+| Source | Images | Quality |
+|--------|--------|---------|
+| LIVECell (original) | 1,208 | High |
+| Synthetic noise | 3,624 | Low |
+| Synthetic blur | 2,416 | Low-Medium |
+| Synthetic shading | 2,416 | Low-Medium |
+| Synthetic JPEG | 2,416 | Medium |
+| Synthetic combined | 2,416 | Low |
+| BBBC005 (real blur) | 19,200 | High-Low (25 levels) |
+| **Total** | **~33,780** | **Full spectrum** |
 
 ## Key Findings So Far
 
