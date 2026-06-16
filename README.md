@@ -23,6 +23,13 @@ The report covers all 6 analysis objectives:
 
 **[FILTER_PLAN.md](FILTER_PLAN.md)** — Professional implementation plan with 7 phases and 40+ checklist items for implementing all 12 bandpass filters, running segmentation comparison, cell-line-adaptive optimization, and application-specific analysis. Estimated ~12.5 hours total.
 
+## Mixed-Quality Dataset
+
+**[DATASET_SUMMARY.md](DATASET_SUMMARY.md)** — 16,912 images (1,208 HQ + 15,704 LQ) with 13 degradation types.
+Created from LIVECell by applying controlled synthetic degradations (noise, blur, shading, JPEG, combined).
+Enables quality-aware FFT analysis and filter recommendation testing.
+[DATASET_PLAN.md](DATASET_PLAN.md) for collection strategy and external dataset sources.
+
 ## Key Results
 
 | Objective | Key Finding |
