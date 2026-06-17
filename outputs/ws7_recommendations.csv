@@ -1,0 +1,5 @@
+cell_line,adaptive_iou,fixed_iou,improvement,best_params,recommendation
+MCF7,0.22899106276652548,0.2270966194995098,0.001894443267015683,"{'wavelet': 'db4', 'levels': 2, 'lambda_physics': 0.05}",Adaptive (IoU=0.229) > Fixed (IoU=0.227)
+SHSY5Y,0.4406580838637101,0.46214824473484384,-0.021490160871133757,"{'wavelet': 'db4', 'levels': 4, 'lambda_physics': 0.05}",Adaptive (IoU=0.441) > Fixed (IoU=0.462)
+BV2,0.20148466591874076,0.15786630708058522,0.04361835883815554,"{'wavelet': 'sym5', 'levels': 4, 'lambda_physics': 0.05}",Adaptive (IoU=0.201) > Fixed (IoU=0.158)
+SkBr3,0.23182235383561575,0.23420691617757594,-0.002384562341960189,"{'wavelet': 'db4', 'levels': 3, 'lambda_physics': 0.05}",Adaptive (IoU=0.232) > Fixed (IoU=0.234)

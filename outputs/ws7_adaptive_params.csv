@@ -1,0 +1,5 @@
+cell_line,best_params,best_iou
+MCF7,"{'wavelet': 'db4', 'levels': 2, 'lambda_physics': 0.05}",0.1346874350565977
+SHSY5Y,"{'wavelet': 'db4', 'levels': 4, 'lambda_physics': 0.05}",0.11750964502649672
+BV2,"{'wavelet': 'sym5', 'levels': 4, 'lambda_physics': 0.05}",0.0425779994316829
+SkBr3,"{'wavelet': 'db4', 'levels': 3, 'lambda_physics': 0.05}",0.168250162218398

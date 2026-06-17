@@ -1,0 +1,21 @@
+cell_line,quality_level,edge,hf_ratio,recommendation
+MCF7,low_quality,6.055,0.4694082025247507,DeBCR+DoG
+MCF7,low_quality,6.293,0.4855563282853899,DeBCR+DoG
+MCF7,low_quality,6.465,0.4923762915217458,DeBCR+DoG
+MCF7,heavy_noise,7.246,0.5911765078906212,"DoG (σ₁=0.03, σ₂=0.15)"
+MCF7,heavy_noise,7.184,0.6123592064804427,"DoG (σ₁=0.03, σ₂=0.15)"
+SHSY5Y,heavy_noise,5.992,0.5655406594010356,"DoG (σ₁=0.03, σ₂=0.15)"
+SHSY5Y,heavy_noise,5.65,0.6060836217278472,"DoG (σ₁=0.03, σ₂=0.15)"
+SHSY5Y,heavy_noise,5.746,0.6193672498268383,"DoG (σ₁=0.03, σ₂=0.15)"
+SHSY5Y,heavy_noise,6.117,0.6162139214464053,"DoG (σ₁=0.03, σ₂=0.15)"
+SHSY5Y,heavy_noise,6.5,0.6358179894569285,"DoG (σ₁=0.03, σ₂=0.15)"
+BV2,heavy_noise,5.492,0.5504832719849548,"DoG (σ₁=0.03, σ₂=0.15)"
+BV2,heavy_noise,5.92,0.5214089240347329,"DoG (σ₁=0.03, σ₂=0.15)"
+BV2,heavy_noise,5.117,0.5339037436530537,"DoG (σ₁=0.03, σ₂=0.15)"
+BV2,low_quality,5.312,0.4935322592810355,DeBCR+DoG
+BV2,low_quality,5.39,0.4514861198569895,DeBCR+DoG
+SkBr3,low_quality,6.477,0.4463573677833179,DeBCR+DoG
+SkBr3,low_quality,6.664,0.46869565891503584,DeBCR+DoG
+SkBr3,heavy_noise,6.227,0.515070984563273,"DoG (σ₁=0.03, σ₂=0.15)"
+SkBr3,low_quality,5.95,0.4856957459005752,DeBCR+DoG
+SkBr3,low_quality,6.414,0.49102971901688763,DeBCR+DoG
