@@ -36,51 +36,11 @@ print("=" * 60)
 try:
     from csbdeep.models import CARE
     from csbdeep.utils import normalize
-
-    # Try to load pre-trained CARE model
-    print("  Loading CARE model...")
-    try:
-        model_care = CARE(config=None, name='care_model', basedir='models')
-        print("  CARE model loaded from disk")
-    except:
-        print("  No pre-trained CARE model found.")
-        print("  Training a simple CARE model on our data...")
-        print("  (This requires paired HQ/LQ images)")
-
-        # Create simple training data from our pairs
-        train_x, train_y = [], []
-        for cl in ["MCF7", "SHSY5Y", "BV2", "SkBr3"]:
-            imgs = [p for p in list_images(cl) if p.stem in annotations][:10]
-            for path in imgs:
-                hq = load_image(path).astype(np.float64)
-                deg_path = Path("data/mixed_quality/synthetic_low/noise_50") / f"{path.stem}.tif"
-                if deg_path.exists():
-                    lq = np.array(Image.open(deg_path)).astype(np.float64)
-                    train_x.append(lq)
-                    train_y.append(hq)
-
-        if len(train_x) > 5:
-            print(f"  Training on {len(train_x)} pairs...")
-            # Normalize
-            train_x = [normalize(x, 1, 99.8) for x in train_x]
-            train_y = [normalize(y, 1, 99.8) for y in train_y]
-
-            # Train CARE
-            model_care = CARE(config=None, name='care_model', basedir='models')
-            model_care.train(
-                np.array(train_x), np.array(train_y),
-                validation_data=None,
-                epochs=50,
-                steps_per_epoch=min(10, len(train_x))
-            )
-            print("  CARE training complete")
-        else:
-            print("  Not enough training data, skipping CARE")
-            model_care = None
-
-except ImportError:
-    print("  csbdeep not available, using DeBCR as CARE alternative")
-    model_care = None
+    CARE_AVAILABLE = True
+    print("  csbdeep available")
+except (ImportError, RuntimeError) as e:
+    print(f"  csbdeep not available ({e}), using DeBCR as CARE alternative")
+    CARE_AVAILABLE = False
 
 # ── 1.2: Noise2Void-like Self-Supervised Denoising ──────────
 print("\n" + "=" * 60)
@@ -242,7 +202,7 @@ for i, path in enumerate(test_images):
         except: pass
 
         # CARE (if available)
-        if model_care is not None:
+        if CARE_AVAILABLE:
             try:
                 from csbdeep.utils import normalize as csbdeep_normalize
                 img_care = model_care.predict(
