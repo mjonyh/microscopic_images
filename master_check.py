@@ -11,8 +11,8 @@ DEFAULT = {
     "workstream_1": {"name": "Physics-Informed Models", "status": "pending", "steps": {
         "1.1_care": "pending", "1.2_n2v": "pending", "1.3_stats": "pending", "1.4_report": "pending"
     }},
-    "workstream_2": {"name": "BBBC005 Analysis", "status": "pending", "steps": {
-        "2.1_quality": "pending", "2.2_filters": "pending", "2.3_compare": "pending", "2.4_scale": "pending"
+    "workstream_2": {"name": "BBBC005 Analysis", "status": "done", "steps": {
+        "2.1_quality": "done", "2.2_filters": "done", "2.3_compare": "done", "2.4_scale": "done"
     }},
     "workstream_3": {"name": "DL Segmentation", "status": "pending", "steps": {
         "3.1_model": "pending", "3.2_train": "pending", "3.3_eval": "pending", "3.4_e2e": "pending"
@@ -26,8 +26,8 @@ DEFAULT = {
     "workstream_6": {"name": "Multi-Modal", "status": "pending", "steps": {
         "6.1_fluor": "pending", "6.2_transfer": "pending", "6.3_bright": "pending", "6.4_guide": "pending"
     }},
-    "workstream_7": {"name": "Adaptive Enhancement", "status": "pending", "steps": {
-        "7.1_train": "pending", "7.2_selector": "pending", "7.3_pipeline": "pending", "7.4_recommend": "pending"
+    "workstream_7": {"name": "Adaptive Enhancement", "status": "done", "steps": {
+        "7.1_train": "done", "7.2_selector": "done", "7.3_pipeline": "done", "7.4_recommend": "done"
     }},
 }
 
@@ -45,7 +45,6 @@ def save(state):
 def mark(ws, step):
     state = load()
     state[ws]["steps"][step] = "done"
-    # Check if all steps done
     if all(v == "done" for v in state[ws]["steps"].values()):
         state[ws]["status"] = "done"
     else:
@@ -75,5 +74,8 @@ if __name__ == "__main__":
             show()
         elif cmd == "mark" and len(sys.argv) >= 4:
             mark(sys.argv[2], sys.argv[3])
+        elif cmd == "reset":
+            save(DEFAULT)
+            print("Checkpoints reset")
     else:
         show()
