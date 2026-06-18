@@ -1,0 +1,28 @@
+modality,quality,application,recommended_filter,parameters,expected_iou,notes
+phase_contrast,high,segmentation,DoG,"σ₁=0.05, σ₂=0.20",+0.05-0.15,Standard frequency bandpass
+phase_contrast,high,classification,None (raw FFT),N/A,N/A (classification task),Filtering removes discriminative low-frequency info
+phase_contrast,high,counting,DoG,"σ₁=0.05, σ₂=0.20",+0.05-0.15,Standard frequency bandpass
+phase_contrast,medium,segmentation,Butterworth,"n=2, d_low=0.02, d_high=0.30",+0.02-0.08,"Smooth roll-off, flat passband"
+phase_contrast,medium,classification,None (raw FFT),N/A,N/A (classification task),Filtering removes discriminative low-frequency info
+phase_contrast,medium,counting,Butterworth,"n=2, d_low=0.02, d_high=0.30",+0.02-0.08,"Smooth roll-off, flat passband"
+phase_contrast,low,segmentation,DeBCR+DoG,Wavelet denoise + DoG,+0.03-0.06,Enhancement + filtering for severe degradation
+phase_contrast,low,classification,None (raw FFT),N/A,N/A (classification task),Filtering removes discriminative low-frequency info
+phase_contrast,low,counting,DeBCR+DoG,Wavelet denoise + DoG,+0.03-0.06,Enhancement + filtering for severe degradation
+fluorescence,high,segmentation,DoG,"σ₁=0.05, σ₂=0.20",+0.05-0.15,Standard frequency bandpass
+fluorescence,high,classification,None (raw FFT),N/A,N/A (classification task),Filtering removes discriminative low-frequency info
+fluorescence,high,counting,DoG,"σ₁=0.05, σ₂=0.20",+0.05-0.15,Standard frequency bandpass
+fluorescence,medium,segmentation,Butterworth,"n=2, d_low=0.02, d_high=0.30",+0.02-0.08,"Smooth roll-off, flat passband"
+fluorescence,medium,classification,None (raw FFT),N/A,N/A (classification task),Filtering removes discriminative low-frequency info
+fluorescence,medium,counting,Butterworth,"n=2, d_low=0.02, d_high=0.30",+0.02-0.08,"Smooth roll-off, flat passband"
+fluorescence,low,segmentation,DeBCR+DoG,Wavelet denoise + DoG,+0.03-0.06,Enhancement + filtering for severe degradation
+fluorescence,low,classification,None (raw FFT),N/A,N/A (classification task),Filtering removes discriminative low-frequency info
+fluorescence,low,counting,DeBCR+DoG,Wavelet denoise + DoG,+0.03-0.06,Enhancement + filtering for severe degradation
+brightfield,high,segmentation,DoG,"σ₁=0.05, σ₂=0.20",+0.05-0.15,Standard frequency bandpass
+brightfield,high,classification,None (raw FFT),N/A,N/A (classification task),Filtering removes discriminative low-frequency info
+brightfield,high,counting,DoG,"σ₁=0.05, σ₂=0.20",+0.05-0.15,Standard frequency bandpass
+brightfield,medium,segmentation,Butterworth,"n=2, d_low=0.02, d_high=0.30",+0.02-0.08,"Smooth roll-off, flat passband"
+brightfield,medium,classification,None (raw FFT),N/A,N/A (classification task),Filtering removes discriminative low-frequency info
+brightfield,medium,counting,Butterworth,"n=2, d_low=0.02, d_high=0.30",+0.02-0.08,"Smooth roll-off, flat passband"
+brightfield,low,segmentation,DeBCR+DoG,Wavelet denoise + DoG,+0.03-0.06,Enhancement + filtering for severe degradation
+brightfield,low,classification,None (raw FFT),N/A,N/A (classification task),Filtering removes discriminative low-frequency info
+brightfield,low,counting,DeBCR+DoG,Wavelet denoise + DoG,+0.03-0.06,Enhancement + filtering for severe degradation
