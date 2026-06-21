@@ -164,7 +164,7 @@ print(f"  Device: {device}")
 if torch.cuda.is_available():
     for i in range(torch.cuda.device_count()):
         props = torch.cuda.get_device_properties(i)
-        print(f"  GPU {i}: {torch.cuda.get_device_name(i)} ({props.total_mem/1e9:.1f} GB)")
+        print(f"  GPU {i}: {torch.cuda.get_device_name(i)} ({props.total_memory/1e9:.1f} GB)")
 
 fold_results = []
 

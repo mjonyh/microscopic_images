@@ -1,0 +1,24 @@
+{
+  "workstream_1": {"name": "Physics-Informed Models", "status": "done", "steps": {
+    "1.1_care": "done", "1.2_n2v": "done", "1.3_stats": "done", "1.4_report": "done"
+  }},
+  "workstream_2": {"name": "BBBC005 Analysis", "status": "done", "steps": {
+    "2.1_quality": "done", "2.2_filters": "done", "2.3_compare": "done", "2.4_scale": "done"
+  }},
+  "workstream_3": {"name": "DL Segmentation", "status": "done", "steps": {
+    "3.1_model": "done", "3.2_train": "done", "3.3_eval": "done", "3.4_e2e": "done"
+  }},
+  "workstream_4": {"name": "Manuscript", "status": "done", "steps": {
+    "4.1_stats": "done", "4.2_figure": "done", "4.3_methods": "done", "4.4_results": "done", "4.5_discussion": "done"
+  }},
+  "workstream_5": {"name": "Real-Time Demo", "status": "pending", "steps": {
+    "5.1_gradio": "pending", "5.2_models": "pending", "5.3_controls": "pending", "5.4_deploy": "pending"
+  }},
+  "workstream_6": {"name": "Multi-Modal", "status": "done", "steps": {
+    "6.1_fluor": "done", "6.2_transfer": "done", "6.3_bright": "done", "6.4_guide": "done"
+  }},
+  "workstream_7": {"name": "Adaptive Enhancement", "status": "done", "steps": {
+    "7.1_train": "done", "7.2_selector": "done", "7.3_pipeline": "done", "7.4_recommend": "done"
+  }},
+  "last_updated": "2025-06-21T00:00:00"
+}

@@ -230,7 +230,7 @@ print("=" * 60)
 from scipy import stats
 
 methods = ["DeBCR", "PI-DDPM", "N2V", "DoG", "DeBCR+DoG"]
-if model_care is not None:
+if CARE_AVAILABLE:
     methods.append("CARE")
 
 print("\n  Paired t-tests (each method vs. Raw):")
