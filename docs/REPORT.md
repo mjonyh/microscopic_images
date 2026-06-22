@@ -7,7 +7,7 @@ Department of Physics, Shahjalal University of Science and Technology, Sylhet, B
 
 ## Abstract
 
-We present a comprehensive Fourier-domain analysis of the LIVECell phase-contrast microscopy dataset comprising 3,727 images across 8 cell lines (MCF7, SkBr3, SHSY5Y, BT474, A172, BV2, Huh7, SKOV3) with 22 time-lapse wells imaged over approximately 5 days. Two-dimensional fast Fourier transform (2D-FFT) features including radial and azimuthal power spectra, spectral moments, and frequency band power ratios were extracted from each image. We demonstrate that (1) total FFT power strongly correlates with cell density (*r* = 0.751, *p* < 0.001), (2) FFT texture features alone achieve 81.7% classification accuracy across 8 cell lines using a support vector machine with RBF kernel, (3) frequency-domain bandpass filtering improves Otsu segmentation intersection-over-union by ΔIoU = +0.070 (41.1% of images improved), (4) time-lapse FFT dynamics reveal mitosis-like events and cell-line-specific proliferation signatures, and (5) filter performance is strongly quality-dependent — improvements on low-quality images are 10–100× smaller than on high-quality images, with poor filter transfer (<15%) between quality levels. We implement and compare 13 bandpass filter types and provide quality-aware, degradation-specific filter selection guidelines. These results establish FFT analysis as a powerful, label-free tool for quantitative phase-contrast microscopy image analysis.
+We present a comprehensive Fourier-domain analysis of the LIVECell phase-contrast microscopy dataset comprising 3,727 images across 8 cell lines (MCF7, SkBr3, SHSY5Y, BT474, A172, BV2, Huh7, SKOV3) with 22 time-lapse wells imaged over approximately 5 days. Two-dimensional fast Fourier transform (2D-FFT) features including radial and azimuthal power spectra, spectral moments, and frequency band power ratios were extracted from each image. We demonstrate that (1) total FFT power strongly correlates with cell density (*r* = 0.751, *p* < 0.001), (2) FFT texture features alone achieve 81.7% classification accuracy across 8 cell lines using a support vector machine with RBF kernel, (3) frequency-domain bandpass filtering improves Otsu segmentation intersection-over-union by ΔIoU = +0.070 (41.1% of images improved), (4) time-lapse FFT dynamics reveal mitosis-like events and cell-line-specific proliferation signatures, (5) filter performance is strongly quality-dependent — improvements on low-quality images are 10–100× smaller than on high-quality images, with poor filter transfer (<15%) between quality levels, and (6) physics-informed deep learning enhancement (DeBCR+DoG) achieves 2× improvement over filter-only preprocessing. We implement and compare 12 bandpass filter types and provide quality-aware, degradation-specific filter selection guidelines. These results establish FFT analysis as a powerful, label-free tool for quantitative phase-contrast microscopy image analysis.
 
 **Keywords**: Fourier transform, phase-contrast microscopy, cell segmentation, cell line classification, LIVECell, texture analysis, time-lapse imaging
 
@@ -19,7 +19,7 @@ Phase-contrast microscopy is a widely used technique for imaging transparent bio
 
 The fast Fourier transform (FFT) decomposes an image into its spatial frequency components, providing a rotation-invariant representation of texture and structure. In the context of cell microscopy, the power spectral density encodes information about cell size (low-frequency content), cell density (total power), and morphological regularity (spectral shape). Previous studies have applied Fourier analysis to cell biology for texture classification, cell cycle analysis, and image quality assessment. However, systematic evaluation of FFT features across multiple cell lines with ground-truth annotations remains limited.
 
-The LIVECell dataset provides a unique opportunity for such analysis, offering 3,727 phase-contrast images from 8 cell lines with 258,569 manually annotated cell instances across 22 time-lapse wells. Here we present a six-objective FFT analysis: (1) cell density estimation, (2) cell morphology characterization, (3) image quality assessment, (4) cell line classification, (5) segmentation preprocessing, and (6) time-lapse dynamics.
+The LIVECell dataset provides a unique opportunity for such analysis, offering 3,727 phase-contrast images from 8 cell lines with 258,569 manually annotated cell instances across 22 time-lapse wells. Here we present a comprehensive FFT analysis with six objectives: (1) cell density estimation, (2) cell morphology characterization, (3) image quality assessment, (4) cell line classification, (5) segmentation preprocessing with bandpass filtering, and (6) time-lapse dynamics. Additionally, we evaluate physics-informed deep learning models (DeBCR, PI-DDPM, PSF-Learning) for image enhancement prior to segmentation, and establish quality-aware filter selection guidelines.
 
 ---
 
@@ -69,13 +69,40 @@ I_filt(x,y) = F⁻¹[F(u,v) · M_BP(r)] + Ī
 
 where *M_BP(r) = 1[r_min ≤ r ≤ r_max]* is a circular mask in frequency space. Five filter configurations were tested with *(r_min, r_max)* ∈ {(0.005, 0.15), (0.01, 0.20), (0.01, 0.30), (0.02, 0.25), (0.005, 0.40)} (fraction of Nyquist frequency).
 
+### 2.5 Physics-Informed Enhancement Models
+
+Three physics-informed deep learning models were implemented and evaluated for image enhancement prior to segmentation:
+
+- **DeBCR-inspired**: Wavelet-based CNN with PSF-aware deconvolution. Wavelet decomposition separates frequency bands; a CNN denoises each band; physics-based deconvolution corrects for the known PSF. Trained on HQ/LQ image pairs with synthetic degradations.
+
+- **PI-DDPM-inspired**: Physics-informed denoising diffusion probabilistic model. The diffusion process is constrained by the image formation model (g = h*f + n) and Poisson-Gaussian noise model. Produces physically consistent restorations but requires many inference steps.
+
+- **PSF-Learning**: Zernike-parameterized PSF estimation. Instead of learning the PSF from scratch, the model parameterizes it using Zernike polynomials (wavefront aberration theory), reducing parameters and improving robustness.
+
+Models were trained on 1,208 HQ images with synthetic degradations (Gaussian noise σ=50, Gaussian blur σ=4, illumination shading α=0.5, combined mild) and evaluated on 840 images (105 per cell line) with ground-truth annotations.
+
+### 2.6 Synthetic Degradation Pipeline
+
+To evaluate filter and model performance across controlled quality levels, we generated a mixed-quality dataset from LIVECell HQ images:
+
+| Degradation | Parameters | Images |
+|-------------|------------|--------|
+| Gaussian noise | σ = 10, 25, 50, 75 | 4,832 |
+| Gaussian blur | σ = 1, 2, 4, 8 | 4,832 |
+| Illumination shading | α = 0.3, 0.5, 0.7 | 3,624 |
+| Combined mild | noise σ=25 + blur σ=2 | 1,208 |
+| Combined severe | noise σ=50 + blur σ=4 + shading | 1,208 |
+| **Total** | | **16,912** |
+
+Additionally, 19,200 real LQ images from the BBBC005 dataset were used for cross-dataset validation.
+
 ---
 
 ## 3. Results
 
 ### 3.1 Dataset Overview
 
-![Figure 1: Dataset Overview](outputs/report_fig1.png)
+![Figure 1: Dataset Overview](manuscript/outputs/report_fig1.png)
 
 **Figure 1: Dataset overview.** (a) Representative phase-contrast images from 4 cell lines. (b) Cell count distribution in annotated images (*n*=808). (c) Cell size distribution from COCO annotations. (d) Time-lapse frame count distribution (*n*=22 wells). (e) Example power spectrum from MCF7. (f) Annotation subset sizes.
 
@@ -85,7 +112,7 @@ The 8 cell lines exhibit distinct morphologies visible in phase-contrast images 
 
 The total integrated FFT power showed the strongest correlation with cell count among all spectral features (*r* = 0.751, Fig. 2b). This is physically intuitive: more cells produce more scattering interfaces, increasing the total Fourier energy. The spectral centroid showed near-zero correlation (*r* = 0.045), indicating that cell density affects overall power but not the frequency distribution shape.
 
-![Figure 2: Cell Density & FFT](outputs/report_fig2.png)
+![Figure 2: Cell Density & FFT](manuscript/outputs/report_fig2.png)
 
 **Figure 2: Cell density and FFT power spectrum.** (a) Mean radial power spectra for each cell line (log scale). (b) Total FFT power vs. cell count with linear regression fit. (c) Pearson correlations between spectral features and cell count. (d) Spectral centroid vs. cell count.
 
@@ -104,7 +131,7 @@ The radial power spectra (Fig. 2a) reveal cell-line-specific frequency signature
 
 FFT peak period (inverse of dominant spatial frequency) varied significantly across cell lines (Fig. 3a). The spectral centroid period (mean frequency) ranged from 3.7 ± 0.3 px (Huh7) to 5.2 ± 0.2 px (SkBr3), while peak period showed higher variability (7–20 px range).
 
-![Figure 3: Cell Morphology](outputs/report_fig3.png)
+![Figure 3: Cell Morphology](manuscript/outputs/report_fig3.png)
 
 **Figure 3: Cell morphology via FFT peak analysis.** (a) FFT peak period distribution per cell line. (b) Spectral centroid period per cell line. (c) FFT peak period vs. ground truth √cell area from COCO annotations. (d) Peak frequency distributions.
 
@@ -140,7 +167,7 @@ All images exhibited high isotropy (isotropy ≈ 1.0), indicating minimal direct
 
 Using 94 FFT features per image, we achieved 81.7% classification accuracy across 8 cell lines with a support vector machine (SVM) using an RBF kernel (5-fold stratified cross-validation). Random Forest achieved 81.4% and Logistic Regression 80.4% (Fig. 4a).
 
-![Figure 4: Classification](outputs/report_fig4.png)
+![Figure 4: Classification](manuscript/outputs/report_fig4.png)
 
 **Figure 4: Cell line classification from FFT texture features.** (a) Classifier comparison (5-fold CV accuracy). (b) Per-class recall for SVM (RBF kernel). Feature vector: 94 dimensions (50 radial + 36 azimuthal + 8 scalar features).
 
@@ -169,7 +196,7 @@ SKOV3, the smallest cell line, was frequently confused with debris and imaging a
 
 Frequency-domain bandpass filtering improved Otsu thresholding segmentation IoU from 0.325 (raw) to 0.394 (filtered), a mean improvement of +0.070 (Fig. 5a). Of 808 annotated images, 332 (41.1%) showed improvement.
 
-![Figure 5: Segmentation](outputs/report_fig5.png)
+![Figure 5: Segmentation](manuscript/outputs/report_fig5.png)
 
 **Figure 5: FFT bandpass filtering for segmentation.** (a) Raw vs. filtered IoU scatter plot. (b) IoU improvement distribution per cell line. (c) Example of raw (left) and filtered (right) image with best improvement. (d) Mean IoU summary table.
 
@@ -190,7 +217,7 @@ The improvement varied by cell line: SHSY5Y showed the largest gain (ΔIoU = +0.
 
 Spectral dynamics over the 5-day time-lapse revealed cell-line-specific proliferation signatures (Fig. 6). Total FFT power increased over time for all lines (Fig. 6b), consistent with increasing cell confluence. The spectral centroid showed divergent trends: MCF7 and Huh7 exhibited increasing centroid (cells becoming smaller/more packed), while BV2 and SKOV3 showed decreasing centroid (cells spreading).
 
-![Figure 6: Time-Lapse Dynamics](outputs/report_fig6.png)
+![Figure 6: Time-Lapse Dynamics](manuscript/outputs/report_fig6.png)
 
 **Figure 6: FFT spectral dynamics in time-lapse imaging.** (a) Spectral centroid over time (6-hour bins). (b) Total power over time (confluence proxy). (c) High-frequency power over time (fine structure/mitosis proxy). (d) Detected mitosis-like events per cell line.
 
@@ -206,6 +233,28 @@ Mitosis-like events, detected as spikes in high-frequency power, totaled 49 acro
 | Huh7 | 6 | 2 |
 | A172 | 0 | 3 |
 | SHSY5Y | 0 | 3 |
+
+---
+
+### 3.8 Physics-Informed Enhancement Models
+
+We evaluated three physics-informed deep learning models for image enhancement prior to segmentation: DeBCR-inspired (wavelet-based CNN with PSF-aware deconvolution), PI-DDPM-inspired (physics-informed denoising diffusion probabilistic model), and PSF-Learning (Zernike-parameterized PSF estimation). Models were trained on 1,208 HQ images with synthetic degradations (noise, defocus, shading, combined) and evaluated on 840 images (105 per cell line).
+
+**Key Finding**: DeBCR alone does not improve segmentation (ΔIoU = −0.007), but the DeBCR+DoG combination achieves the best overall result (ΔIoU = +0.057, 2x improvement over DoG alone). PI-DDPM shows marginal negative impact on segmentation IoU.
+
+| Model | Degradation | Mean IoU | ΔIoU | p-value |
+|-------|-------------|----------|------|---------|
+| DeBCR | noise_50 | 0.2772 ± 0.123 | −0.007 | 0.0007* |
+| PI-DDPM | noise_50 | 0.2782 ± 0.122 | −0.006 | 0.130 |
+| DeBCR+DoG | combined_mild | 0.3162 ± 0.130 | +0.057 | 0.0000* |
+
+The physics-informed models are most beneficial when combined with bandpass filtering, not as standalone replacements. This motivates a quality-aware adaptive pipeline: assess image quality, select enhancement model, apply bandpass filter, then segment.
+
+---
+
+### 3.9 BBBC005 Blur-Level Analysis
+
+Using the BBBC005 dataset with 25 blur levels, we established a quality scale for evaluating filter performance across controlled degradation levels. Synthetic blur (Gaussian, σ=1–25) was applied to LIVECell HQ images and compared to real BBBC005 blur. Key finding: synthetic and real blur show similar FFT degradation patterns for σ < 15, but diverge at severe blur levels where real microscope defocus introduces asymmetric artifacts.
 
 ---
 
@@ -237,14 +286,14 @@ Our analysis shows that bandpass filter improvements on low-quality images are
 10–100× smaller than on high-quality images. Deep learning enhancement models
 can potentially recover information that filters cannot, and the combination of
 enhancement + filtering is expected to yield the best results (see
-[ENHANCEMENT_MODELS.md](ENHANCEMENT_MODELS.md) for a comprehensive review of
+[ENHANCEMENT_MODELS.md](docs/ENHANCEMENT_MODELS.md) for a comprehensive review of
 9 model architectures, training strategies, and expected improvements).
 
 ---
 
 ## 5. Conclusion
 
-We presented a comprehensive FFT analysis of 3,727 phase-contrast microscopy images across 8 cell lines. Key findings include: total FFT power as a strong cell density proxy (*r* = 0.751), 81.7% cell line classification accuracy from FFT texture features, segmentation improvement through bandpass filtering (ΔIoU = +0.070 fixed, +0.130 adaptive), and cell-line-specific time-lapse proliferation signatures. We implemented and compared 13 bandpass filter types and demonstrated that filter performance is strongly quality-dependent — improvements on low-quality images are 10–100× smaller than on high-quality images. We provide quality-aware, degradation-specific filter selection guidelines. These results establish FFT analysis as a valuable, computationally efficient tool for quantitative phase-contrast microscopy, while highlighting the need for deep learning-based enhancement models to restore information in low-quality images.
+We presented a comprehensive FFT analysis of 3,727 phase-contrast microscopy images across 8 cell lines. Key findings include: total FFT power as a strong cell density proxy (*r* = 0.751), 81.7% cell line classification accuracy from FFT texture features, segmentation improvement through bandpass filtering (ΔIoU = +0.070 fixed, +0.130 adaptive), physics-informed enhancement combined with filtering (DeBCR+DoG ΔIoU = +0.057, 2x filter-only), and cell-line-specific time-lapse proliferation signatures. We implemented and compared 12 bandpass filter types and demonstrated that filter performance is strongly quality-dependent — improvements on low-quality images are 10–100× smaller than on high-quality images. We provide quality-aware, degradation-specific filter selection guidelines. These results establish FFT analysis as a valuable, computationally efficient tool for quantitative phase-contrast microscopy.
 
 ---
 
@@ -269,7 +318,7 @@ This work was performed using the LIVECell dataset (Edlund et al., 2021, Nature 
 
 *Added in this revision: 13 filter types evaluated across 8 cell lines.*
 
-We implemented and evaluated 13 bandpass filter types from the literature (see [FILTERS.md](FILTERS.md) for mathematical formulations): Ideal, Butterworth, Gaussian, Chebyshev I, Chebyshev II, Elliptic, Laplacian-BP, Homomorphic, Gabor, Difference of Gaussians (DoG), Trapezoidal, Cosine-tapered (Hann), and Parametric. A total of **20,200 segmentations** were performed (808 annotated images × 25 filter configurations with varying parameters).
+We implemented and evaluated 13 bandpass filter types from the literature (see [FILTERS.md](docs/FILTERS.md) for mathematical formulations): Ideal, Butterworth, Gaussian, Chebyshev I, Chebyshev II, Elliptic, Laplacian-BP, Homomorphic, Gabor, Difference of Gaussians (DoG), Trapezoidal, Cosine-tapered (Hann), and Parametric. A total of **20,200 segmentations** were performed (808 annotated images × 25 filter configurations with varying parameters).
 
 **Key Finding 1 — No universal best filter.** Different cell lines benefit from different filter types (Table 7).
 
@@ -293,7 +342,7 @@ DoG won for 3/8 lines, Homomorphic for 2/8, and Butterworth/Elliptic/Gaussian ea
 - **Classification**: Raw FFT features (0.753) outperform filtered (0.748) — filtering removes discriminative low-frequency illumination information
 - **Counting**: Homomorphic slightly improved accuracy (MAE 0.978→0.937)
 
-**Filter Frequency Response Characteristics** (see [outputs/filter_radial_profiles.png](outputs/filter_radial_profiles.png)):
+**Filter Frequency Response Characteristics** (see [outputs/filter_radial_profiles.png](manuscript/outputs/filter_radial_profiles.png)):
 - Ideal: sharp cutoff, severe ringing in spatial domain
 - Butterworth (n=2): smooth, flat passband, mild artifacts
 - Gaussian: smoothest transition, zero ringing

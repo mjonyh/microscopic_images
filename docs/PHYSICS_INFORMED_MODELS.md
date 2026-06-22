@@ -3,6 +3,10 @@
 A detailed reference on models that incorporate the physics of light propagation,
 optical systems, and microscope-specific knowledge into deep learning architectures.
 
+This document serves as the theoretical foundation for the physics-informed
+enhancement work described in the [manuscript](../manuscript/ms_manuscript.tex)
+and [scientific report](REPORT.md).
+
 ---
 
 ## 1. What Are Physics-Informed Models?
