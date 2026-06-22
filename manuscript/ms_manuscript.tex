@@ -30,6 +30,7 @@
 \usepackage{enumitem}
 \usepackage{wrapfig}
 \usepackage{makecell}
+\usepackage{xspace}
 \usepackage{algorithm}
 \usepackage{algorithmic}
 
@@ -540,7 +541,7 @@ SkBr3  & 0.989 & 0.877 & 0.930 & 528 \\
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{manuscript/outputs/fig6_classification.png}
+\includegraphics[width=\textwidth]{outputs/fig6_classification.pdf}
 \caption{\textbf{Classification summary.}
 (a)~Per-class recall, precision, and F1-score for SVM-RBF (5-fold CV).
 (b)~Comparison of raw vs filtered FFT features for classification.}
@@ -614,7 +615,7 @@ HQ images do not transfer to LQ images.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth]{manuscript/outputs/fig4_transfer_efficiency.png}
+\includegraphics[width=0.85\textwidth]{outputs/fig4_transfer_efficiency.pdf}
 \caption{\textbf{Filter transfer efficiency.} Transfer ratios from HQ
 to LQ images for key filter types. All filters show poor transfer
 ($<$15\%), motivating quality-aware filter selection.}
@@ -629,7 +630,7 @@ Fig.~\ref{fig:adaptive}.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{manuscript/outputs/fig5_adaptive_vs_fixed.png}
+\includegraphics[width=\textwidth]{outputs/fig5_adaptive_vs_fixed.pdf}
 \caption{\textbf{Adaptive vs fixed filter selection.} (a)~Mean IoU per
 cell line: fixed (single best filter) vs.\ adaptive (cell-line-specific
 optimal). (b)~IoU improvement distribution.}
@@ -643,7 +644,7 @@ adapted parameters.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{manuscript/outputs/fig1_filter_matrix.png}
+\includegraphics[width=\textwidth]{outputs/fig1_filter_matrix.pdf}
 \caption{\textbf{Filter$\times$cell-line comparison matrix.}
 Heatmap of mean IoU for 12 filter types across 8 cell lines.
 Color scale: blue = low IoU, red = high IoU. White cells indicate
@@ -706,7 +707,7 @@ DeBCR$+$\dog combination achieves the best overall performance.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{manuscript/outputs/fig2_physics_models.png}
+\includegraphics[width=\textwidth]{outputs/fig2_physics_models.pdf}
 \caption{\textbf{Physics-informed model comparison.}
 (a)~Mean IoU $\pm$ SD by method and degradation type.
 (b)~Cohen's $d$ effect sizes. Green = statistically significant
