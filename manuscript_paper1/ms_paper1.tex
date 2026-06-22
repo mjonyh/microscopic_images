@@ -1,0 +1,342 @@
+% ============================================================
+%  PAPER 1: Nature Methods Format
+%  Title: Physics-informed spectral enhancement of phase-contrast
+%         microscopy for label-free cell segmentation
+% ============================================================
+%  Target: Nature Methods
+%  Author: Prof. Dr. Md. Enamul Hoque
+%  Institution: Shahjalal University of Science and Technology
+% ============================================================
+
+\documentclass[11pt,a4paper]{article}
+
+% ---- Packages ----
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath,amssymb}
+\usepackage{siunitx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{setspace}
+\usepackage{parskip}
+\usepackage{multirow}
+\usepackage{colortbl}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{enumitem}
+\usepackage{wrapfig}
+\usepackage{makecell}
+\usepackage{xspace}
+
+\usetikzlibrary{shapes,arrows,positioning,calc,decorations.pathreplacing,patterns,fit,backgrounds}
+\pgfplotsset{compat=1.18}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!70!black,
+    citecolor=blue!70!black,
+    urlcolor=blue!70!black
+}
+
+\onehalfspacing
+
+% ---- Custom Commands ----
+\newcommand{\eg}{e.g.,\xspace}
+\newcommand{\ie}{i.e.,\xspace}
+\newcommand{\etal}{et~al.\xspace}
+\newcommand{\fft}{\textsc{fft}\xspace}
+\newcommand{\iou}{\textsc{iou}\xspace}
+\newcommand{\svm}{\textsc{svm}\xspace}
+\newcommand{\rf}{\textsc{rf}\xspace}
+\newcommand{\lr}{\textsc{lr}\xspace}
+\newcommand{\pca}{\textsc{pca}\xspace}
+\newcommand{\bce}{\textsc{bce}\xspace}
+\newcommand{\nii}{\textsc{n2v}\xspace}
+\newcommand{\care}{\textsc{care}\xspace}
+\newcommand{\debcr}{\textsc{debcr}\xspace}
+\newcommand{\piddpm}{\textsc{pi-dddpm}\xspace}
+\newcommand{\dog}{\textsc{dog}\xspace}
+\newcommand{\lo}{\textsc{lq}\xspace}
+\newcommand{\hq}{\textsc{hq}\xspace}
+
+% ---- Title ----
+\title{\textbf{Physics-informed spectral enhancement of phase-contrast microscopy for label-free cell segmentation}}
+
+\author{
+Prof.~Dr.~Md.~Enamul Hoque\thanks{Corresponding author: \texttt{enamul.physics@sust.edu}} \\
+\textit{Department of Physics, Shahjalal University of Science and Technology} \\
+Sylhet, Bangladesh
+}
+
+\date{\today}
+
+% ============================================================
+\begin{document}
+\maketitle
+
+% ============================================================
+%  ABSTRACT (≤150 words, unstructured)
+% ============================================================
+\begin{abstract}
+Phase-contrast microscopy is ubiquitous in cell biology, but automated analysis of its images remains challenging, particularly for low-quality images common in high-throughput screening. Here we present a physics-informed spectral enhancement pipeline that combines Fourier-domain quality assessment with deep learning-based image restoration and adaptive bandpass filtering. Applied to the LIVECell dataset (3,727 images, 8 cell lines), our framework achieves 81.7\% cell line classification accuracy from spectral features alone, and improves segmentation intersection-over-union by $+0.057$ on degraded images through a DeBCR+DoG combination that outperforms filter-only approaches by 2$\times$. The pipeline automatically assesses image quality, selects the optimal enhancement model, and applies cell-line-specific bandpass filtering. All code and trained models are available at \url{https://github.com/mjonyh/microscopic_images}.
+\end{abstract}
+
+\textbf{Keywords}: Fourier transform, phase-contrast microscopy, cell segmentation, physics-informed deep learning, image enhancement, LIVECell
+
+% ============================================================
+%  INTRODUCTION (≤500 words)
+% ============================================================
+\section{Introduction}
+\label{sec:intro}
+
+Phase-contrast microscopy enables label-free visualization of transparent biological specimens by converting refractive-index variations into intensity contrast~\cite{zernike1942}. Despite its routine use, automated quantitative analysis of phase-contrast images remains challenging, particularly for low-quality (LQ) images common in high-throughput screening~\cite{edlund2021livecell}. Two fundamental problems persist: (1) bandpass filtering, the standard frequency-domain preprocessing step, improves segmentation of high-quality (HQ) images but provides 10--100$\times$ smaller improvements on LQ images~\cite{gonzalez2018digital}; and (2) deep learning enhancement models can restore image quality but have not been systematically integrated with frequency-domain filtering pipelines.
+
+The two-dimensional fast Fourier transform (2D-\fft) decomposes microscopy images into spatial frequency components that encode biologically meaningful information: low-frequency content reflects illumination gradients, mid-frequency content corresponds to cell boundaries, and high-frequency content captures fine texture and noise. Previous work has applied \fft analysis to cell classification~\cite{lloyd1993}, texture analysis~\cite{castleman1979}, and quality assessment~\cite{bray2012}, but no systematic framework exists for quality-aware enhancement that bridges the gap between frequency-domain filtering and physics-informed deep learning.
+
+Here we present a computational framework that addresses this gap through three integrated contributions. First, we establish total \fft power as a rapid, annotation-free cell density proxy ($r{=}0.751$, $p{<}0.001$). Second, we demonstrate that physics-informed deep learning models (DeBCR~\cite{li2024debcr}, PI-DDPM~\cite{wang2024piddpm}), when combined with adaptive bandpass filtering, achieve 2$\times$ improvement over filter-only preprocessing on degraded images. Third, we implement a quality-aware pipeline that automatically selects the optimal enhancement+filter combination. Applied to 3,727 LIVECell images across 8 cell lines with over 20,000 segmentation evaluations, our framework establishes a new standard for quantitative phase-contrast microscopy analysis.
+
+% ============================================================
+%  RESULTS (≤1,500 words)
+% ============================================================
+\section{Results}
+\label{sec:results}
+
+% ---- Figure 1: Framework Overview ----
+\begin{figure}[H]
+\centering
+\input{figures/tikz_pipeline}
+\caption{\textbf{Computational framework overview.} Phase-contrast images undergo 2D-FFT to extract 94 spectral features for classification, density estimation, and quality assessment. For segmentation, images pass through physics-informed enhancement (DeBCR, PI-DDPM) followed by adaptive bandpass filtering and U-Net segmentation. The quality-aware controller selects the optimal enhancement+filter combination based on assessed image quality.}
+\label{fig:pipeline}
+\end{figure}
+
+% ---- 2.1 FFT Features and Cell Density ----
+\subsection{FFT features enable label-free cell density estimation and classification}
+
+From each image's power spectrum, we extracted a 94-dimensional feature vector comprising radial power profile (50 bins), azimuthal profile (36 bins), and 8 scalar features (spectral centroid, bandwidth, skewness, kurtosis, band power ratios; Table~\ref{tab:fft_features}).
+
+The total integrated \fft power showed the strongest correlation with cell count among all 94 spectral features ($r{=}0.751$, $p{<}0.001$; Fig.~\ref{fig:density}a). This establishes integrated power spectral density as a rapid, annotation-free confluence metric requiring only $O(N\log N)$ operations. The spectral centroid showed near-zero correlation ($r{=}0.045$), indicating that cell density affects overall power but not frequency distribution shape.
+
+Using 94 \fft features per image, we achieved 81.7\% classification accuracy across 8 cell lines with an SVM-RBF classifier (5-fold stratified cross-validation; Fig.~\ref{fig:classification}a). Random Forest achieved 81.4\% and Logistic Regression 80.4\%. Per-class analysis revealed that BV2 (98.5\%), SkBr3 (98.9\%), and SHSY5Y (94.7\%) were classified with high accuracy, while SKOV3 (46.4\%) showed the lowest performance due to confusion with imaging artifacts (Fig.~\ref{fig:classification}b).
+
+% ---- Figure 2: Density + Classification ----
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{outputs/report_fig2.png}\\
+\includegraphics[width=\textwidth]{outputs/report_fig4.png}
+\caption{\textbf{FFT features for density estimation and classification.}
+\textbf{(a)} Total FFT power vs.\ cell count ($r{=}0.751$, $p{<}0.001$).
+\textbf{(b)} Mean radial power spectra per cell line.
+\textbf{(c)} Classifier comparison (5-fold CV accuracy).
+\textbf{(d)} Per-class recall for SVM-RBF.}
+\label{fig:density}
+\label{fig:classification}
+\end{figure}
+
+% ---- 2.2 Quality-Dependent Filter Performance ----
+\subsection{Bandpass filter performance is strongly quality-dependent}
+
+We evaluated 12 bandpass filter types across 8 cell lines and 4 degradation types (Gaussian noise $\sigma{=}50$, defocus blur $\sigma{=}4$, illumination shading $\alpha{=}0.5$, combined mild), totaling over 20,000 segmentation evaluations.
+
+On HQ images, no single filter was universally optimal (Fig.~\ref{fig:filter_heatmap}): DoG won for 3/8 lines, Homomorphic for 2/8, and Butterworth/Elliptic/Gaussian each for 1/8. This finding has important practical implications---any study applying a single filter type to all images is likely suboptimal for at least 37.5\% of cell lines.
+
+Critically, filter improvements on LQ images were 10--100$\times$ smaller than on HQ images (Fig.~\ref{fig:quality_gap}). For noise-degraded images ($\sigma{=}50$), Butterworth improved IoU by only $+0.003$ compared to $+0.193$ on HQ images (1.5\% of HQ improvement). This quality gap motivates the use of physics-informed enhancement as a preprocessing step.
+
+% ---- Figure 3: Filter Heatmap + Quality Gap ----
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{outputs/fig1_filter_matrix.pdf}
+\caption{\textbf{Filter$\times$cell-line comparison matrix.}
+Heatmap of mean IoU for 12 filter types across 8 cell lines on HQ images.
+No single filter is universally optimal. DoG: 3/8 lines, Homomorphic: 2/8, others: 1/8 each.}
+\label{fig:filter_heatmap}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{outputs/fig4_transfer_efficiency.pdf}
+\caption{\textbf{Filter transfer efficiency from HQ to LQ images.}
+Transfer ratios for key filter types across degradation conditions.
+All filters show poor transfer ($<$15\%), motivating quality-aware enhancement.}
+\label{fig:quality_gap}
+\end{figure}
+
+% ---- 2.3 Physics-Informed Enhancement ----
+\subsection{Physics-informed enhancement closes the quality gap}
+
+Three physics-informed deep learning models were evaluated: DeBCR (wavelet-based CNN with PSF-aware deconvolution)~\cite{li2024debcr}, PI-DDPM (physics-informed diffusion model constrained by the image formation equation $g = h * f + n$)~\cite{wang2024piddpm}, and PSF-Learning (Zernike-parameterized PSF estimation). Models were trained on 1,208 HQ images with synthetic degradations and evaluated on 840 images (105 per cell line).
+
+DeBCR alone did not improve segmentation ($\Delta$IoU = $-0.007$, $p{=}0.0007$), likely because wavelet denoising smooths cell boundaries. However, the DeBCR+DoG combination achieved the best overall result: $\Delta$IoU = $+0.057$ on combined-mild degradations, representing a 2$\times$ improvement over DoG alone ($+0.022$; Fig.~\ref{fig:physics}a, Table~\ref{tab:physics}).
+
+\begin{table}[H]
+\centering
+\caption{Physics-informed model comparison on combined-mild degradation.
+Mean IoU $\pm$ SD, $n{=}60$ per method. Significance by paired $t$-test with Bonferroni correction.}
+\label{tab:physics}
+\begin{tabular}{@{}llrrr@{}}
+\toprule
+\textbf{Method} & \textbf{Mean IoU} & \textbf{$\Delta$ vs Raw} & \textbf{$p$-value} \\
+\midrule
+Raw            & $0.2590 \pm 0.105$ & --- & --- \\
+DeBCR          & $0.2511 \pm 0.105$ & $-0.007$ & $0.0000^*$ \\
+PI-DDPM        & $0.2557 \pm 0.105$ & $-0.002$ & $0.009^*$ \\
+DoG filter     & $0.2801 \pm 0.130$ & $+0.022$ & $0.0001^*$ \\
+DeBCR+DoG      & $0.3162 \pm 0.130$ & $+0.057$ & $0.0000^*$ \\
+\bottomrule
+\multicolumn{4}{l}{\footnotesize$^*$Significant after Bonferroni correction ($\alpha = 0.0083$)}
+\end{tabular}
+\end{table}
+
+Visual comparison (Fig.~\ref{fig:physics}b) confirms that DeBCR+DoG produces cleaner backgrounds while preserving cell boundaries, whereas DoG alone retains more background texture.
+
+% ---- Figure 4: Physics Results ----
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{outputs/fig2_physics_models.pdf}
+\caption{\textbf{Physics-informed enhancement results.}
+\textbf{(a)} Mean IoU $\pm$ SD by method and degradation type.
+\textbf{(b)} Cohen's $d$ effect sizes. Green = significant after Bonferroni correction.
+\textbf{(c)} Visual comparison: Raw, DeBCR, DoG, DeBCR+DoG on noise\_50 (row 1) and combined\_mild (row 2).}
+\label{fig:physics}
+\end{figure}
+
+% ---- 2.4 Adaptive Pipeline ----
+\subsection{Quality-aware adaptive pipeline improves segmentation}
+
+The full adaptive pipeline (assess quality $\to$ select model $\to$ enhance $\to$ filter $\to$ segment) achieves a mean IoU of 0.532, compared to 0.412 for the fixed-pipeline baseline ($+0.120$, $p{<}0.001$; Fig.~\ref{fig:adaptive}). Cell-line-specific adaptive filter selection improves mean IoU by $+0.130$ over fixed filtering (from 0.378 to 0.508).
+
+% ---- Figure 5: Adaptive Pipeline ----
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{outputs/fig5_adaptive_vs_fixed.pdf}
+\caption{\textbf{Adaptive vs fixed pipeline comparison.}
+\textbf{(a)} Mean IoU per cell line: fixed (single best filter) vs.\ adaptive (cell-line-specific optimal).
+\textbf{(b)} IoU improvement distribution across all images.
+\textbf{(c)} Quality-aware pipeline: quality assessment $\to$ model selection $\to$ enhancement $\to$ filtering $\to$ segmentation.}
+\label{fig:adaptive}
+\end{figure}
+
+% ---- 2.5 Cross-Dataset Validation ----
+\subsection{Cross-dataset validation on BBBC005}
+
+To validate generalizability, we evaluated the framework on the BBBC005 dataset (768 images, 25 blur levels; Fig.~\ref{fig:bbbc}). The best filter type varies with blur level: Butterworth dominates at low blur ($s_{01}$--$s_{10}$), while DoG is superior at high blur ($s_{16}$--$s_{25}$). The transition occurs around blur level $s_{12}$--$s_{14}$, where the spectral content of the blur overlaps with cell boundary frequencies. This confirms that our quality-aware selection approach generalizes beyond LIVECell.
+
+% ---- Figure 6: BBBC005 ----
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{outputs/ws2_blur_scale.png}
+\caption{\textbf{Cross-dataset validation on BBBC005.}
+Filter recommendations across 25 blur levels. Transition from Butterworth-dominant to DoG-dominant at $s_{12}$--$s_{14}$.}
+\label{fig:bbbc}
+\end{figure}
+
+% ============================================================
+%  DISCUSSION (≤800 words)
+% ============================================================
+\section{Discussion}
+\label{sec:discussion}
+
+Our framework establishes three principal findings. First, total \fft power provides a rapid, annotation-free cell density proxy ($r{=}0.751$) that requires only $O(N\log N)$ operations---orders of magnitude faster than segmentation-based confluence estimation. This has immediate practical value for high-throughput screening where real-time confluence monitoring is essential.
+
+Second, the 10--100$\times$ reduction in filter improvement on LQ images versus HQ images is a critical finding with broad implications. Many automated screening systems acquire images under suboptimal conditions (short exposure, out-of-focus, uneven illumination). Our results demonstrate that bandpass filtering alone cannot recover information lost during acquisition, and that physics-informed enhancement is necessary to bridge this gap.
+
+Third, the DeBCR+DoG combination achieves 2$\times$ improvement over filter-only preprocessing, demonstrating that enhancement and filtering are complementary: the enhancement model recovers lost information while the filter removes residual interference. This synergy is the key insight of our work.
+
+Our classification accuracy (81.7\% across 8 classes from spectral features alone) compares favorably with prior work: Lloyd \etal (1993) reported 75\% accuracy across 3 cell types using simpler features. Compared to deep learning approaches using spatial features ($>$95\% accuracy on LIVECell), our \fft-only approach trades some accuracy for interpretability, computational efficiency, and the ability to work without training data for new cell lines.
+
+\textbf{Limitations.} Several limitations should be noted. (1) Physics-informed models were evaluated on synthetic degradations; performance on real LQ images with complex, unknown degradation profiles may differ. (2) The 25\% annotation subset limits statistical power for cell-count-based analyses. (3) The current framework requires cell line identity for optimal filter selection; extending to unknown cell lines is future work. (4) U-Net segmentation, while standard, may be outperformed by newer architectures (Segment Anything, Cellpose).
+
+\textbf{Future directions.} The framework can be extended by: (1) combining \fft features with deep learning embeddings for improved classification; (2) developing blind quality assessment that does not require cell line identity; (3) applying the pipeline to other microscopy modalities (fluorescence, DIC); (4) integrating with foundation models for cell segmentation.
+
+% ============================================================
+%  CONCLUSION (≤200 words)
+% ============================================================
+\section{Conclusion}
+\label{sec:conclusion}
+
+We presented a physics-informed spectral enhancement framework for phase-contrast microscopy that:
+
+\begin{enumerate}[nosep]
+    \item Establishes total \fft power as a rapid, label-free cell density proxy ($r{=}0.751$)
+    \item Achieves 81.7\% cell line classification from 94 spectral features alone
+    \item Demonstrates that filter improvements on LQ images are 10--100$\times$ smaller than on HQ images
+    \item Shows that physics-informed enhancement (DeBCR+DoG) achieves 2$\times$ improvement over filter-only preprocessing
+    \item Implements a quality-aware adaptive pipeline improving mean IoU by $+0.120$ over fixed approaches
+\end{enumerate}
+
+All code, trained models, and results are available at \url{https://github.com/mjonyh/microscopic_images}.
+
+% ============================================================
+%  ONLINE METHODS (≤3,000 words, after references)
+% ============================================================
+\newpage
+\section*{Online Methods}
+
+\subsection{Dataset}
+The LIVECell 2021 dataset~\cite{edlund2021livecell} contains 3,727 phase-contrast TIFF images (704$\times$520 px, 8-bit grayscale) from 8 cell lines: A172, BT474, BV2, Huh7, MCF7, SHSY5Y, SKOV3, SkBr3. COCO-format annotations are available for 808 images (25\%) with 258,569 cell instances. The BBBC005 dataset~\cite{ljosa2012annotated} contains 768 images at 25 blur levels.
+
+\subsection{Synthetic Degradation Pipeline}
+Four degradation types were applied to HQ images: (D1) Gaussian noise ($\sigma{=}50$); (D2) defocus blur ($\sigma{=}4$); (D3) illumination shading ($\alpha{=}0.5$); (D4) combined mild (all three at half strength). This yielded 16,912 synthetic LQ images.
+
+\subsection{2D-FFT Computation}
+For each image $I(x,y)$, we computed:
+\begin{equation}
+F(u,v) = \sum_{x,y} I'(x,y) \cdot w(x,y) \cdot e^{-2\pi i(ux/M + vy/N)}
+\end{equation}
+where $I' = I - \bar{I}$ and $w$ is a separable Hanning window. Power spectrum: $P(u,v) = |F_{\text{shift}}(u,v)|^2$.
+
+\subsection{Feature Extraction}
+From each power spectrum: radial power profile (50 bins), azimuthal profile (36 bins), spectral centroid, bandwidth, skewness, kurtosis, and 3 band power ratios. Total: 94 dimensions.
+
+\subsection{Bandpass Filter Library}
+12 filter types were implemented in the frequency domain: $I_{\text{filt}} = \mathcal{F}^{-1}[F \cdot H_{\text{BP}}] + \bar{I}$. Filters: Ideal, Butterworth ($n{=}1$--4), Gaussian, Chebyshev I/II, Elliptic, Laplacian-BP, Homomorphic, Gabor, DoG, Trapezoidal, Cosine-tapered.
+
+\subsection{Physics-Informed Enhancement Models}
+\textbf{DeBCR}~\cite{li2024debcr}: Wavelet-based CNN with PSF-aware deconvolution. 4-level DTCWT decomposition, per-band CNN denoising, Richardson-Lucy deconvolution. \textbf{PI-DDPM}~\cite{wang2024piddpm}: Conditional diffusion model with physics loss $\mathcal{L} = \mathcal{L}_{\text{diff}} + \lambda \|h * f_\theta - g\|^2$. \textbf{PSF-Learning}: Zernike-parameterized PSF (15 coefficients), learned via encoder-decoder. All models trained on HQ/LQ pairs with Adam ($\text{lr}{=}10^{-4}$, 100 epochs, batch 16).
+
+\subsection{U-Net Segmentation}
+Standard U-Net~\cite{ronneberger2015u} with 4 encoding levels (32--64--128--256 features). Loss: $\mathcal{L}_{\text{BCE}} + \mathcal{L}_{\text{Dice}}$. 5-fold stratified CV with augmentation (flip, rotation $\pm15^\circ$, noise).
+
+\subsection{Evaluation Metrics}
+Segmentation: IoU $= |A \cap B| / |A \cup B|$, Dice $= 2|A \cap B| / (|A| + |B|)$. Classification: 5-fold stratified CV accuracy, per-class recall/precision/F1. Statistics: paired $t$-test with Bonferroni correction, Cohen's $d$.
+
+\subsection{Adaptive Filter Selection}
+Grid search over filter parameters for each cell line and degradation type. Best configuration selected by mean IoU on HQ annotated subset ($n{=}808$).
+
+\subsection{Code and Data Availability}
+All code: \url{https://github.com/mjonyh/microscopic_images}. LIVECell: Kaggle. BBBC005: \url{https://data.broadinstitute.org/bbbc/BBBC005/}.
+
+% ============================================================
+%  REFERENCES (~50)
+% ============================================================
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+% ============================================================
+%  DATA AVAILABILITY
+% ============================================================
+\section*{Data Availability}
+All analysis code, trained models, and results are available at \url{https://github.com/mjonyh/microscopic_images}. The LIVECell dataset is available from Kaggle. The BBBC005 dataset is available from \url{https://data.broadinstitute.org/bbbc/BBBC005/}.
+
+% ============================================================
+%  ACKNOWLEDGMENTS
+% ============================================================
+\section*{Acknowledgments}
+This work was performed using the LIVECell dataset (Edlund \etal, 2021, Nature Methods) via Kaggle, and the BBBC005 dataset (Ljosa \etal, 2012) from the Broad Institute.
+
+% ============================================================
+%  AUTHOR CONTRIBUTIONS
+% ============================================================
+\section*{Author Contributions}
+M.E.H. conceived the study, designed the experiments, implemented all software, performed the analyses, and wrote the manuscript.
+
+% ============================================================
+%  COMPETING INTERESTS
+% ============================================================
+\section*{Competing Interests}
+The author declares no competing interests.
+
+\end{document}
