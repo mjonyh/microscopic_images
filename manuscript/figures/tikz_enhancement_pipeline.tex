@@ -1,0 +1,51 @@
+% TikZ schematic: Image Formation Model + Enhancement Pipeline
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    node distance=1.5cm and 2cm,
+    block/.style={rectangle, draw, fill=blue!8, minimum width=3cm, minimum height=1cm, align=center, font=\small},
+    arrow/.style={->, >=stealth, thick},
+    label/.style={font=\footnotesize}
+]
+
+% Image formation
+\node[block, fill=gray!15] (obj) {True Object\\$f(x,y)$};
+\node[block, fill=gray!15, right=of obj] (psf) {PSF\\$h(x,y)$};
+\node[block, fill=gray!15, right=of psf] (noise) {Noise\\$n(x,y)$};
+\node[block, fill=gray!15, right=of noise] (obs) {Observed\\$g(x,y)$};
+
+\draw[arrow] (obj) -- node[above, label] {$\otimes$} (psf);
+\draw[arrow] (psf) -- node[above, label] {$+$} (noise);
+\draw[arrow] (noise) -- (obs);
+
+% Enhancement pipeline (below)
+\node[block, fill=orange!10, below=1.5cm of obs] (assess) {Quality\\Assessment};
+\node[block, fill=orange!10, left=of assess] (select) {Model\\Selection};
+\node[block, fill=green!10, left=of select] (enhance) {Enhancement\\(DeBCR / PI-DDPM)};
+\node[block, fill=green!10, below=of assess] (filt) {Bandpass\\Filter};
+\node[block, fill=green!10, below=of filt] (seg) {U-Net\\Segmentation};
+\node[block, fill=green!10, below=of seg] (out) {Segmentation\\Mask};
+
+\draw[arrow] (enhance) -- (select);
+\draw[arrow] (select) -- (assess);
+\draw[arrow] (assess) -- (filt);
+\draw[arrow] (filt) -- (seg);
+\draw[arrow] (seg) -- (out);
+
+% Feedback arrow
+\draw[arrow, dashed, bend right=40] (assess.east) to node[right, label] {quality\\metric} (select.south);
+
+% Brace
+\draw[decorate, decoration={brace, amplitude=5pt}]
+    ($(enhance.north west)+(-0.2,0.3)$) -- ($(assess.north east)+(0.2,0.3)$)
+    node[midway, above=0.4cm, label] {\textbf{Quality-Aware Adaptive Pipeline}};
+
+\end{tikzpicture}
+\caption{\textbf{Image formation and enhancement pipeline.}
+(top) The microscopy image formation model: the true object is convolved
+with the point-spread function (PSF) and corrupted by noise.
+(bottom) Our quality-aware adaptive pipeline: image quality is assessed
+to select the optimal enhancement model, followed by bandpass filtering
+and U-Net segmentation.}
+\label{fig:enhancement_pipeline}
+\end{figure}
