@@ -1,25 +1,26 @@
 # FFT Analysis of Phase-Contrast Microscopy (LIVECell)
 
-This repository contains the complete source code, data, figures, and manuscript for an FFT-based analysis of the LIVECell phase-contrast microscopy dataset. The project implements a computational framework that extracts spectral features from cell images for density estimation, classification, quality assessment, and segmentation preprocessing, with physics-informed deep learning enhancement.
+This repository contains the complete source code, data, figures, manuscript, and tutorial documentation for an FFT-based analysis of the LIVECell phase-contrast microscopy dataset. The project implements a computational framework that extracts spectral features from cell images for density estimation, classification, quality assessment, and segmentation preprocessing, with physics-informed deep learning enhancement.
 
-## Manuscript
+## Manuscripts
 
-The full scientific manuscript is written in LaTeX and compiled to PDF. It is self-contained in the `manuscript/` directory and ready for submission.
+Two journal-ready manuscripts are prepared:
 
-- **Source**: `manuscript/ms_manuscript.tex`
-- **PDF**: `manuscript/ms_manuscript.pdf` (20 pages)
-- **Figures**: `manuscript/outputs/` (PDF data figures) + `manuscript/figures/` (TikZ schematics)
-- **References**: `manuscript/references.bib`
+### Paper 1 — Nature Methods
+- **Title:** Physics-informed spectral enhancement of phase-contrast microscopy for label-free cell segmentation
+- **File:** `manuscript_paper1/ms_paper1.pdf` (13 pages)
+- **Source:** `manuscript_paper1/ms_paper1.tex`
+- **Compile:** `cd manuscript_paper1 && bash compile.sh`
 
-### Compile
+### Paper 2 — Medical Image Analysis
+- **Title:** Systematic evaluation of twelve bandpass filters for FFT-based segmentation of phase-contrast microscopy across eight cell lines and thirteen degradation types
+- **File:** `manuscript_paper2/ms_paper2.pdf` (10 pages)
+- **Source:** `manuscript_paper2/ms_paper2.tex`
+- **Compile:** `cd manuscript_paper2 && bash compile.sh`
 
-```bash
-cd manuscript
-bash compile.sh
-# Output: manuscript/ms_manuscript.pdf
-```
-
-The compile script runs a 4-pass pdflatex + bibtex cycle. Requires `texlive-most` and `texlive-science`.
+### Original Full Manuscript
+- **File:** `manuscript/ms_manuscript.pdf` (20 pages)
+- **Source:** `manuscript/ms_manuscript.tex`
 
 ## Key Findings
 
@@ -33,21 +34,49 @@ The compile script runs a 4-pass pdflatex + bibtex cycle. Requires `texlive-most
 | Enhancement | DeBCR + DoG combined | 2x improvement over filter-only |
 | Time-Lapse | Spectral centroid dynamics | 49 mitosis events detected |
 
+## Tutorials
+
+Step-by-step guides for each method used in the articles:
+
+| # | Tutorial | Topic | Source Code |
+|---|----------|-------|-------------|
+| 1 | [FFT Feature Extraction](tutorials/01_fft_feature_extraction.md) | 2D-FFT computation, radial/azimuthal profiles, 94-dim feature vector | `src/common.py`, `src/obj1_density_spectrum.py` |
+| 2 | [Bandpass Filter Library](tutorials/02_bandpass_filters.md) | 12 filter types: Ideal, Butterworth, Gaussian, Chebyshev, Elliptic, DoG, Homomorphic, Gabor, Laplacian-BP, Trapezoidal, Cosine | `src/filters.py` |
+| 3 | [Physics-Informed Enhancement](tutorials/03_physics_informed_models.md) | DeBCR, PI-DDPM, PSF-Learning: architecture, training, physics constraints | `src/phaseA_physics_models.py`, `src/ws1_physics_models.py` |
+| 4 | [U-Net Segmentation](tutorials/04_unet_segmentation.md) | Architecture, BCE+Dice loss, 5-fold CV, data augmentation | `src/ws3_unet.py`, `src/phase3_segmentation.py` |
+| 5 | [Adaptive Filter Selection](tutorials/05_adaptive_filter_selection.md) | Quality assessment, grid search, cell-line-specific optimization | `src/ws7_adaptive.py`, `src/phase4_5_adaptive_apps.py` |
+| 6 | [Synthetic Degradation Pipeline](tutorials/06_synthetic_degradation.md) | Noise, blur, shading, combined degradations, dataset generation | `src/synthesize_low_quality.py` |
+| 7 | [Evaluation Metrics](tutorials/07_evaluation_metrics.md) | IoU, Dice, precision/recall, paired t-test, Bonferroni, Cohen's d | `src/ws4_manuscript.py`, `src/obj4_classification.py` |
+
 ## Repository Structure
 
 ```
 livecell/
 ├── README.md                          # This file
-├── manuscript/                        # Self-contained paper package
-│   ├── ms_manuscript.tex              # LaTeX source
-│   ├── ms_manuscript.pdf              # Compiled PDF
-│   ├── compile.sh                     # Build script
-│   ├── references.bib                 # Bibliography
+├── manuscript/                        # Original full manuscript
+│   ├── ms_manuscript.tex / .pdf
+│   ├── compile.sh
+│   ├── references.bib
 │   ├── figures/                       # TikZ schematic diagrams
-│   │   ├── tikz_pipeline.tex
-│   │   ├── tikz_filter_taxonomy.tex
-│   │   └── tikz_enhancement_pipeline.tex
 │   └── outputs/                       # Publication figures (PDF + PNG)
+├── manuscript_paper1/                 # Paper 1: Nature Methods format
+│   ├── ms_paper1.tex / .pdf
+│   ├── compile.sh
+│   ├── figures -> ../manuscript/figures
+│   └── outputs -> ../manuscript/outputs
+├── manuscript_paper2/                 # Paper 2: Medical Image Analysis format
+│   ├── ms_paper2.tex / .pdf
+│   ├── compile.sh
+│   ├── figures -> ../manuscript/figures
+│   └── outputs -> ../manuscript/outputs
+├── tutorials/                         # Method tutorials
+│   ├── 01_fft_feature_extraction.md
+│   ├── 02_bandpass_filters.md
+│   ├── 03_physics_informed_models.md
+│   ├── 04_unet_segmentation.md
+│   ├── 05_adaptive_filter_selection.md
+│   ├── 06_synthetic_degradation.md
+│   └── 07_evaluation_metrics.md
 ├── src/                               # Python source code
 │   ├── common.py                      # Shared FFT utilities, I/O
 │   ├── filters.py                     # 12-filter bandpass library
@@ -81,7 +110,10 @@ livecell/
 │   ├── CHECKLIST.md                   # Manuscript completeness checklist
 │   ├── MASTER_PLAN.md                 # Master project plan
 │   ├── PLAN.md                        # Implementation plan
-│   └── GPU_PLAN.md                    # GPU utilization plan
+│   ├── GPU_PLAN.md                    # GPU utilization plan
+│   ├── SUBMISSION_PLAN.md             # Journal submission strategy
+│   ├── SUPPLEMENTARY_PLAN.md          # Supplementary material plan
+│   └── JOURNAL_LIST.md                # Journal comparison and selection
 ├── data/                              # Dataset files (not in git)
 └── .venv/                             # Python virtual environment
 ```
@@ -110,20 +142,6 @@ source .venv/bin/activate
 bash run_all.sh        # Run all 7 workstreams
 bash run_all.sh N      # Run single workstream by number
 ```
-
-## Implementation
-
-### FFT Feature Extraction
-
-Each image is processed via 2D-FFT to extract a 94-dimensional feature vector: radial power profile (50 bins), azimuthal profile (36 bins), and 8 scalar features (total power, centroid frequency, peak period, spectral entropy, low/high-freq fraction, isotropy index, background shading).
-
-### Enhancement Pipeline
-
-Physics-informed models (DeBCR-inspired, PI-DDPM-inspired, PSF-Learning) are applied before bandpass filtering. Model selection is quality-aware: HQ images skip enhancement, LQ images receive DeBCR+DoG (2x improvement over DoG alone).
-
-### Segmentation
-
-U-Net with 5-fold cross-validation on 808 annotated images. Bandpass preprocessing improves IoU by +0.07 on average (41% of images benefit).
 
 ## Citation
 
