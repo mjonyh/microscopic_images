@@ -1,0 +1,3 @@
+Degradation Type,Raw IoU,Best Filter,Best IoU,Improvement
+Gaussian noise (σ=50),0.302,Butterworth,0.304,0.003
+Combined mild,0.281,Butterworth,0.309,0.028

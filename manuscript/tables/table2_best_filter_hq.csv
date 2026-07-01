@@ -1,0 +1,9 @@
+Cell Line,Best Filter,Best IoU,Raw IoU,Delta IoU
+A172,homomorphic,0.827,0.583,0.244
+BT474,butterworth,0.507,0.314,0.193
+BV2,dog,0.527,0.191,0.336
+Huh7,homomorphic,0.609,0.285,0.324
+MCF7,elliptic,0.639,0.338,0.302
+SHSY5Y,dog,0.799,0.325,0.474
+SKOV3,gaussian,0.965,0.627,0.338
+SkBr3,dog,0.63,0.183,0.447

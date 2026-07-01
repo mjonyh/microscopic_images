@@ -1,0 +1,5 @@
+Filter,HQ Improvement,LQ Improvement,Transfer Ratio
+Butterworth,0.193,0.003,1.5%
+DoG,0.474,0.002,0.5%
+Homomorphic,0.244,0.001,0.4%
+Gaussian,0.2,0.002,0.6%

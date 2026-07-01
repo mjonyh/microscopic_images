@@ -1,0 +1,8 @@
+Degradation Type,Best Filter,Parameters,Rationale
+Gaussian noise,Butterworth (n=4),"d_low=0.03, d_high=0.25",Higher cutoff removes noise
+Motion blur,DoG,"σ₁=0.03, σ₂=0.15",Bandpass around cell frequency
+Defocus blur,DoG,"σ₁=0.05, σ₂=0.20",Similar to motion blur
+Illumination shading,Homomorphic,"γ_L=0.3, γ_H=2.5",Specifically designed for multiplicative artifacts
+JPEG compression,Butterworth (n=2),"d_low=0.01, d_high=0.40",Mild filtering; JPEG already removes HF
+Combined (mild),Butterworth (n=2),"d_low=0.02, d_high=0.30",Balanced approach
+Combined (severe),Butterworth (n=4),"d_low=0.03, d_high=0.35",Aggressive filtering needed

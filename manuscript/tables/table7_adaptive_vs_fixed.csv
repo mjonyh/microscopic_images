@@ -1,0 +1,5 @@
+Metric,Fixed Filter,Adaptive,Delta
+Mean IoU (HQ),0.378,0.508,0.13
+Mean IoU (LQ),0.285,0.305,0.02
+Improvement (HQ),0.0,0.13,0.13
+Improvement (LQ),0.0,0.02,0.02

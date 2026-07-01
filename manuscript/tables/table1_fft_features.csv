@@ -1,0 +1,5 @@
+Feature Type,Dimensions,Description
+Radial Profile,50 bins,Azimuthally averaged power vs. spatial frequency
+Azimuthal Profile,36 bins,Radially averaged power vs. angle
+Scalar Features,8 features,"Total power, centroid, bandwidth, skewness, kurtosis, low/mid/high band power"
+Total,94,Combined feature vector for classification

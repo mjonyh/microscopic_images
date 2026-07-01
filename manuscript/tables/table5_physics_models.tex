@@ -1,0 +1,16 @@
+\begin{tabular}{llrrrrr}
+\toprule
+Method & Degradation & Mean IoU & Std IoU & Mean Improvement & p-value & Significant \\
+\midrule
+DeBCR & noise_50 & 0.2772 & 0.1229 & -0.0016 & 0.0007 & True \\
+DeBCR & combined_mild & 0.2511 & 0.1045 & -0.0068 & 0.0000 & True \\
+PI-DDPM & noise_50 & 0.2782 & 0.1220 & -0.0006 & 0.1303 & False \\
+PI-DDPM & combined_mild & 0.2557 & 0.1045 & -0.0022 & 0.0092 & True \\
+N2V & noise_50 & 0.2766 & 0.1221 & -0.0022 & 0.0009 & True \\
+N2V & combined_mild & 0.2538 & 0.1057 & -0.0041 & 0.0006 & True \\
+DoG & noise_50 & 0.2810 & 0.1245 & 0.0021 & 0.0008 & True \\
+DoG & combined_mild & 0.2801 & 0.1303 & 0.0222 & 0.0001 & True \\
+DeBCR+DoG & noise_50 & 0.2819 & 0.1241 & 0.0031 & 0.0000 & True \\
+DeBCR+DoG & combined_mild & 0.3044 & 0.1070 & 0.0465 & 0.0000 & True \\
+\bottomrule
+\end{tabular}
