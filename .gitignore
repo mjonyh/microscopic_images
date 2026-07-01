@@ -1,6 +1,6 @@
 # LIVECell project
 data/
-outputs/
+/outputs/
 .venv/
 __pycache__/
 *.pyc
