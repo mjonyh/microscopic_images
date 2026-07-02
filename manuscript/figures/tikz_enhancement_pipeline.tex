@@ -1,10 +1,13 @@
-% TikZ schematic: Image Formation Model + Enhancement Pipeline
-\begin{figure}[H]
-\centering
+% TikZ schematic: Image Formation + Enhancement Pipeline (standalone compile)
+\documentclass[tikz,border=10pt]{standalone}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta,decorations.pathreplacing,calc}
+
+\begin{document}
 \begin{tikzpicture}[
     node distance=1.5cm and 2cm,
     block/.style={rectangle, draw, fill=blue!8, minimum width=3cm, minimum height=1cm, align=center, font=\small},
-    arrow/.style={->, >=stealth, thick},
+    arrow/.style={-{Stealth[length=2mm]}, thick},
     label/.style={font=\footnotesize}
 ]
 
@@ -32,20 +35,13 @@
 \draw[arrow] (filt) -- (seg);
 \draw[arrow] (seg) -- (out);
 
-% Feedback arrow
-\draw[arrow, dashed, bend right=40] (assess.east) to node[right, label] {quality\\metric} (select.south);
-
-% Brace
-\draw[decorate, decoration={brace, amplitude=5pt}]
+% Brace label
+\draw[decorate, decoration={brace, amplitude=5pt, mirror}]
     ($(enhance.north west)+(-0.2,0.3)$) -- ($(assess.north east)+(0.2,0.3)$)
     node[midway, above=0.4cm, label] {\textbf{Quality-Aware Adaptive Pipeline}};
 
+% Caption note
+\node[font=\footnotesize, align=center] at (0,-9) {(top) Image formation: $g = f \otimes h + n$ \\ (bottom) Adaptive enhancement $\rightarrow$ filter $\rightarrow$ U-Net};
+
 \end{tikzpicture}
-\caption{\textbf{Image formation and enhancement pipeline.}
-(top) The microscopy image formation model: the true object is convolved
-with the point-spread function (PSF) and corrupted by noise.
-(bottom) Our quality-aware adaptive pipeline: image quality is assessed
-to select the optimal enhancement model, followed by bandpass filtering
-and U-Net segmentation.}
-\label{fig:enhancement_pipeline}
-\end{figure}
+\end{document}
