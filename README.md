@@ -121,7 +121,7 @@ livecell/
 ## Dataset
 
 - **Source**: [LIVECell](https://sartorius-research.github.io/LIVECell/) (Sartorius, Nature Methods 2021)
-- **Images**: 5,239 phase-contrast TIFF, 704x520 px, 8-bit grayscale
+- **Images**: 3,727 phase-contrast TIFF, 704x520 px, 8-bit grayscale
 - **Cell lines**: MCF7, SkBr3, SHSY5Y, BT474, A172, BV2, Huh7, SKOV3
 - **Annotations**: COCO format, 1.68M cell instances
 - **Download**: `kaggle datasets download -d yuriisavinskyi/livecell-dataset-2021`
