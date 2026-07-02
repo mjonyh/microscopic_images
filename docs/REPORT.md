@@ -314,7 +314,7 @@ This work was performed using the LIVECell dataset (Edlund et al., 2021, Nature 
 
 ---
 
-## 5. Bandpass Filter Comprehensive Comparison
+## Supplementary Section S1: Bandpass Filter Comprehensive Comparison
 
 *Added in this revision: 13 filter types evaluated across 8 cell lines.*
 
@@ -359,7 +359,7 @@ DoG won for 3/8 lines, Homomorphic for 2/8, and Butterworth/Elliptic/Gaussian ea
 
 ---
 
-## 6. Filter Performance Across Image Quality Levels
+## Supplementary Section S2: Filter Performance Across Image Quality Levels
 
 *This section presents filter performance on the mixed-quality dataset (16,912 images: 1,208 HQ + 15,704 synthetic LQ + 19,200 real LQ from BBBC005).*
 
